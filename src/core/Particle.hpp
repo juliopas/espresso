@@ -240,7 +240,7 @@ struct ParticleProperties {
 
 #ifdef ESPRESSO_MAGNETIZE
   bool is_magnetizable = false;
-  uint8_t magnetize_func = 0;
+  int magnetize_func = 0;
 #endif
 
   template <class Archive> void serialize(Archive &ar, long int /* version */) {
