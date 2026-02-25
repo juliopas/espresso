@@ -274,6 +274,18 @@ ParticleHandle::ParticleHandle() {
        },
        [this]() { return get_particle_data(m_pid).dip_fld(); }},
 #endif
+#ifdef ESPRESSO_MAGNETIZE
+      {"is_magnetizable",
+       [this](Variant const &value) {
+         set_particle_property(&Particle::is_magnetizable, value);
+       },
+       [this]() { return get_particle_data(m_pid).is_magnetizable(); }},
+      {"magnetize_func",
+       [this](Variant const &value) {
+         set_particle_property(&Particle::magnetize_func, value);
+       },
+       [this]() { return get_particle_data(m_pid).magnetize_func(); }},
+#endif
 #ifdef ESPRESSO_THERMAL_STONER_WOHLFARTH
       {"magnetodynamics",
        [this](Variant const &value) {

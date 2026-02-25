@@ -700,6 +700,10 @@ int System::System::integrate(int n_steps, int reuse_forces) {
     integrate_magnetodynamics();
 #endif
 
+#ifdef ESPRESSO_MAGNETIZE
+    integrate_magnetodynamics_testing();
+#endif
+
     calculate_forces();
 
 #ifdef ESPRESSO_VIRTUAL_SITES_INERTIALESS_TRACERS

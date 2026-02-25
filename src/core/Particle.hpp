@@ -238,6 +238,11 @@ struct ParticleProperties {
   ThermalStonerWohlfarthParameters magnetodynamics;
 #endif
 
+#ifdef ESPRESSO_MAGNETIZE
+  bool is_magnetizable = false;
+  uint8_t magnetize_func = 0;
+#endif
+
   template <class Archive> void serialize(Archive &ar, long int /* version */) {
     ar & identity;
     ar & mol_id;
@@ -285,6 +290,10 @@ struct ParticleProperties {
 #endif
 #ifdef ESPRESSO_THERMAL_STONER_WOHLFARTH
     ar & magnetodynamics;
+#endif
+#ifdef ESPRESSO_MAGNETIZE
+    ar & is_magnetizable;
+    ar & magnetize_func;
 #endif
   }
 };
@@ -564,6 +573,12 @@ public:
   }
   auto &stoner_wohlfarth_dt_incr() { return p.magnetodynamics.dt_incr; }
 #endif // ESPRESSO_THERMAL_STONER_WOHLFARTH
+#ifdef ESPRESSO_MAGNETIZE
+  auto const &is_magnetizable() const { return p.is_magnetizable; }
+  auto &is_magnetizable() { return p.is_magnetizable; }
+  auto const &magnetize_func() const { return p.magnetize_func; }
+  auto &magnetize_func() { return p.magnetize_func; }
+#endif
 #ifdef ESPRESSO_DIPOLE_FIELD_TRACKING
   auto const &dip_fld() const { return p.dip_fld; }
   auto &dip_fld() { return p.dip_fld; }
