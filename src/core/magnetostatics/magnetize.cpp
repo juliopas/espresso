@@ -68,7 +68,7 @@ static void magnetize_p_Langevin(Particle &p, Utils::Vector3d const &ext_fld)
   const double dipm_tri = dipm_saturated * tri / kBT_langevin_mag;
 
   double L;
-  if (std::abs(dipm_tri) < 1e-8) {
+  if (dipm_tri < 1e-8) {
     // small-x expansion to avoid numerical instability
     L = dipm_tri / 3.;
   } else {
