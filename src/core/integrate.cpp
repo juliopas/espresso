@@ -579,6 +579,10 @@ int System::System::integrate(int n_steps, int reuse_forces) {
     }
 #endif
 
+#ifdef ESPRESSO_MAGNETIZE
+    integrate_magnetodynamics_testing();
+#endif
+
     // Communication step: distribute ghost positions
     cell_structure->update_ghosts_and_resort_particle(get_global_ghost_flags());
 
