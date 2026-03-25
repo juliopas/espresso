@@ -54,8 +54,7 @@ constexpr static double dipm_equals_zero2 = std::pow(1e-5, 2);
  */
 static void magnetize_p_Langevin(Particle &p, Utils::Vector3d const &ext_fld)
 {
-  const double dipm_saturated = 1.;
-  const double kBT_langevin_mag = 1.;
+  const double dipm_saturated = p.dipm_sat();
 
   auto const ext_fld_dpl = ext_fld + p.dip_fld();
   const double tri2 = ext_fld_dpl.norm2();
@@ -65,14 +64,14 @@ static void magnetize_p_Langevin(Particle &p, Utils::Vector3d const &ext_fld)
   }
   const double tri = std::sqrt(tri2);
 
-  const double dipm_tri = dipm_saturated * tri / kBT_langevin_mag;
+  const double alpha = 3 * p.mag_susc_0() / dipm_saturated * tri;
 
   double L;
-  if (dipm_tri < 1e-8) {
+  if (alpha < 1e-8) {
     // small-x expansion to avoid numerical instability
-    L = dipm_tri / 3.;
+    L = alpha / 3.;
   } else {
-    L = 1.0 / std::tanh(dipm_tri) - 1.0 / dipm_tri;
+    L = 1.0 / std::tanh(alpha) - 1.0 / alpha;
   }
 
   auto const dip_new = (dipm_saturated * L / tri) * ext_fld_dpl;
@@ -92,8 +91,8 @@ static void magnetize_p_Langevin(Particle &p, Utils::Vector3d const &ext_fld)
  */
 static void magnetize_p_froelich_kennelly(Particle &p, Utils::Vector3d const &ext_fld)
 {
-  const double dipm_saturated = 1.;
-  const double xi0 = 1. / 3.;
+  const double dipm_saturated = p.dipm_sat();
+  const double xi0 = p.mag_susc_0();
 
   auto const ext_fld_dpl = ext_fld + p.dip_fld();
   const double tri2 = ext_fld_dpl.norm2();
