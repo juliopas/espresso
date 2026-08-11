@@ -362,11 +362,14 @@ protected:
   void update_icc_particles();
   bool has_icc_enabled() const;
 #endif // ESPRESSO_ELECTROSTATICS
-#ifdef ESPRESSO_THERMAL_STONER_WOHLFARTH
-  void integrate_magnetodynamics();
-#endif
-#ifdef ESPRESSO_MAGNETIZE
-  void integrate_magnetodynamics_testing();
+#if defined(ESPRESSO_LANGEVIN_MAGNETIZATION) ||                                 \
+    defined(ESPRESSO_FROELICH_KENNELLY) ||                                     \
+    defined(ESPRESSO_THERMAL_STONER_WOHLFARTH)
+  /** @brief Update per-particle dipole moments according to the enabled
+   *  magnetization dynamics models. Deterministic field-response models
+   *  (Langevin, Froelich-Kennelly) run every call; stochastic/thermal models
+   *  (Stoner-Wohlfarth) run only when @p initial_step is false. */
+  void integrate_magnetodynamics(bool initial_step);
 #endif
 
 private:

@@ -314,6 +314,17 @@ void System::System::integrator_sanity_checks() const {
     }
   }
 #endif // ESPRESSO_THERMAL_STONER_WOHLFARTH
+#if defined(ESPRESSO_LANGEVIN_MAGNETIZATION) ||                                \
+    defined(ESPRESSO_FROELICH_KENNELLY) ||                                     \
+    defined(ESPRESSO_THERMAL_STONER_WOHLFARTH)
+  for (auto const &p : cell_structure->local_particles()) {
+    if (p.enabled_magnetodynamics_models() > 1) {
+      runtimeErrorMsg()
+          << "Particles can only enable one magnetodynamics model at a time";
+      break;
+    }
+  }
+#endif
 }
 
 #ifdef ESPRESSO_WALBERLA
@@ -582,8 +593,10 @@ int System::System::integrate(int n_steps, int reuse_forces) {
     }
 #endif
 
-#ifdef ESPRESSO_MAGNETIZE
-    integrate_magnetodynamics_testing();
+#if defined(ESPRESSO_LANGEVIN_MAGNETIZATION) ||                                \
+    defined(ESPRESSO_FROELICH_KENNELLY) ||                                     \
+    defined(ESPRESSO_THERMAL_STONER_WOHLFARTH)
+    integrate_magnetodynamics(/* initial_step */ true);
 #endif
 
     // Communication step: distribute ghost positions
@@ -700,16 +713,17 @@ int System::System::integrate(int n_steps, int reuse_forces) {
     if (cell_structure->get_resort_particles() >= Cells::RESORT_LOCAL)
       n_verlet_updates++;
 
+    /* Update the magnetic moments before the ghost exchange, so that ghost
+     * copies carry the moments the force calculation is about to use. This
+     * mirrors the ordering of the initial force calculation above. */
+#if defined(ESPRESSO_LANGEVIN_MAGNETIZATION) ||                                \
+    defined(ESPRESSO_FROELICH_KENNELLY) ||                                     \
+    defined(ESPRESSO_THERMAL_STONER_WOHLFARTH)
+    integrate_magnetodynamics(/* initial_step */ false);
+#endif
+
     // Communication step: distribute ghost positions
     cell_structure->update_ghosts_and_resort_particle(get_global_ghost_flags());
-
-#ifdef ESPRESSO_THERMAL_STONER_WOHLFARTH
-    integrate_magnetodynamics();
-#endif
-
-#ifdef ESPRESSO_MAGNETIZE
-    integrate_magnetodynamics_testing();
-#endif
 
     calculate_forces();
 

@@ -618,8 +618,20 @@ General features
 -  ``DIPOLE_FIELD_TRACKING`` enable dipolar direct sum algorithms
    to calculate the total dipole field at particle positions.
 
--  ``THERMAL_STONER_WOHLFARTH`` enable dipolar algorithms to integrates
-   vritual sites that implement the thermal Stoner–Wohlfarth model
+-  ``THERMAL_STONER_WOHLFARTH`` enable dipolar algorithms to integrate
+   virtual sites that implement the thermal Stoner–Wohlfarth model
+
+   .. seealso:: :ref:`Thermal_Stoner_Wohlfarth`
+
+-  ``LANGEVIN_MAGNETIZATION`` enable virtual sites whose dipole moment follows
+   the Langevin magnetization curve of the local magnetic field
+
+   .. seealso:: :ref:`Langevin_magnetization`
+
+-  ``FROELICH_KENNELLY`` enable virtual sites whose dipole moment follows the
+   Froelich–Kennelly magnetization curve of the local magnetic field
+
+   .. seealso:: :ref:`Froelich_Kennelly`
 
 -  ``ROTATION`` Switch on rotational degrees of freedom for the particles, as well as
    the corresponding quaternion integrator.

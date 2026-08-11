@@ -20,6 +20,12 @@ electrokinetics). Simulations are driven from Python via the `espressomd` module
 - Format before done: `maintainer/format/clang-format.sh -i <file.cpp>`, `maintainer/format/autopep8.sh -i <file.py>`. Every source file carries the GPL header.
 - Features compiled in are selected by `myconfig.hpp` (presets in `maintainer/configs/`, defs in `src/config/features.def`).
 
-## Cross-link
-`pressomancy` (../pressomancy) drives this engine through the Python API / `script_interface` layer —
-see core-architecture.md for that seam. Git remote/sync ops are the user's only (see `~/.claude/CLAUDE.md`).
+## Cross-links
+- **pressomancy** (../pressomancy) drives this engine through the Python API / `script_interface` layer —
+  see core-architecture.md for that seam.
+- **SCRIPTS/dev_espresso** (../SCRIPTS/dev_espresso) holds your own test scripts + benchmarks for changes to
+  this engine: after editing C++, **rebuild** (`cd build && make -j`) then run them via `build/pypresso`.
+  (From the espresso workspace, `/add-dir ../SCRIPTS` to reach them.)
+
+**Plans:** tag each step `[quick]`/`[impl]`/`[impl-opus]` (tiers in `~/.claude/CLAUDE.md`).
+Git remote/sync ops are the user's only (see `~/.claude/CLAUDE.md`).

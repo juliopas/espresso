@@ -19,6 +19,140 @@ nor does it perfectly follow its motion.
 
 To incorporate this phenomenology in simulations, |es| offers several models, listed below.
 
+.. _Magnetodynamics_common:
+
+Common requirements
+-------------------
+
+All magnetodynamics models share the same setup constraints.
+
+* The moment must live on a **virtual site** attached to a real particle via
+  :meth:`~espressomd.particle_data.ParticleHandle.vs_auto_relate_to`, with
+  propagation mode ``Propagation.TRANS_VS_RELATIVE | Propagation.ROT_VS_INDEPENDENT``.
+  The update is skipped silently for non-virtual particles.
+* A particle may enable **at most one** model at a time. Enabling two raises a
+  runtime error when the integrator starts.
+* The effective field driving the response is
+  :math:`\vec{H} = \vec{H}_\mathrm{ext} + \vec{H}_\mathrm{dip}`, where
+  :math:`\vec{H}_\mathrm{ext}` is the sum of all
+  :class:`~espressomd.constraints.HomogeneousMagneticField` constraints and
+  :math:`\vec{H}_\mathrm{dip}` is the particle's
+  :attr:`~espressomd.particle_data.ParticleHandle.dip_fld`.
+
+.. note::
+
+    ``dip_fld`` is only computed by :class:`~espressomd.magnetostatics.DipolarDirectSum`
+    (CPU and GPU), the only solvers that support ``DIPOLE_FIELD_TRACKING``. With
+    :class:`~espressomd.magnetostatics.DipolarP3M`, :class:`~espressomd.magnetostatics.DLC`
+    or ScaFaCoS, ``dip_fld`` stays zero, so the models respond to the **external field
+    alone** and all interparticle magnetic coupling is ignored. This is not reported at
+    runtime, so pick the direct sum whenever the mutual magnetization matters.
+
+.. note::
+
+    ``dip_fld`` is recomputed during the force calculation, i.e. *after* the
+    magnetization update, and is zero on the initial force evaluation. The mutual
+    magnetization of interacting particles is therefore solved **explicitly**: it
+    relaxes to its self-consistent value over several time steps rather than within
+    one. Keep the time step small when particles significantly magnetize each other.
+
+.. _Langevin_magnetization:
+
+Langevin magnetization
+----------------------
+
+.. note::
+
+    Requires feature ``LANGEVIN_MAGNETIZATION``.
+
+A superparamagnetic particle whose internal moment relaxes much faster than the
+MD time step carries no memory: its moment is an instantaneous, purely algebraic
+function of the local field. The **Langevin magnetization** model assigns
+
+.. math::
+
+   \vec{m} = m_\mathrm{sat} \, L(\alpha) \, \hat{H},
+   \qquad
+   \alpha = \frac{3 \chi_0 |\vec{H}|}{m_\mathrm{sat}},
+   \qquad
+   L(x) = \coth(x) - \frac{1}{x}
+
+where :math:`m_\mathrm{sat}` is the saturation moment
+(:attr:`~espressomd.particle_data.ParticleHandle.dipm_sat`) and :math:`\chi_0` the
+initial susceptibility (:attr:`~espressomd.particle_data.ParticleHandle.mag_susc_0`).
+The prefactor :math:`3\chi_0/M_\mathrm{sat}` is chosen so that the response is linear
+at weak fields, :math:`|\vec{m}| \to \chi_0 |\vec{H}|`, and saturates at
+:math:`M_\mathrm{sat}` at strong fields. Below :math:`\alpha = 10^{-2}` the series
+:math:`L(\alpha) \approx \alpha/3 - \alpha^3/45` is used instead of the closed form.
+
+The model is deterministic and thermostat-free: unlike
+:ref:`Thermal_Stoner_Wohlfarth` it does not sample thermal fluctuations of the moment,
+and :math:`k_B T` does not enter. It suits large particles for which the thermal
+energy is negligible against the field energy.
+
+Fields with :math:`|\vec{H}| < 10^{-5}` are treated as vanishing, and set
+:math:`|\vec{m}| = 0`.
+
+.. _Froelich_Kennelly:
+
+Froelich–Kennelly magnetization
+-------------------------------
+
+.. note::
+
+    Requires feature ``FROELICH_KENNELLY``.
+
+The **Froelich–Kennelly** relation is an interpolation between the same two
+limits, avoiding the hyperbolic functions:
+
+.. math::
+
+   \vec{m} = \frac{\chi_0 m_\mathrm{sat}}{m_\mathrm{sat} + \chi_0 |\vec{H}|} \vec{H}
+
+It uses the same two particle properties, with the same meaning, and shares the
+linear-response and saturation limits of the Langevin model while differing in
+between.
+
+.. _Magnetization_models_example:
+
+Example
+-------
+
+Both models are configured entirely through particle properties::
+
+    import espressomd
+    import espressomd.magnetostatics
+    import espressomd.constraints
+    import espressomd.propagation
+    Propagation = espressomd.propagation.Propagation
+
+    system = espressomd.System(box_l=[10.0, 10.0, 10.0])
+    system.time_step = 0.01
+    system.cell_system.skin = 0.4
+    system.min_global_cut = 2.
+
+    # the driving external field
+    system.constraints.add(
+        espressomd.constraints.HomogeneousMagneticField(H=[0., 0., 1.]))
+
+    # a magnetizable unit: real anchor + virtual site carrying the moment
+    anchor = system.part.add(pos=[5., 5., 5.])
+    p = system.part.add(pos=anchor.pos, rotation=[True, True, True])
+    p.vs_auto_relate_to(anchor)
+    p.propagation = Propagation.TRANS_VS_RELATIVE | Propagation.ROT_VS_INDEPENDENT
+
+    p.dipm_sat = 1.0    # saturation moment M_sat, must be > 0
+    p.mag_susc_0 = 0.33  # initial susceptibility chi_0, must be >= 0
+    p.langevin_magnetization_is_enabled = True
+    # or, for the other model:
+    # p.froelich_kennelly_is_enabled = True
+
+    # only the direct sum feeds dip_fld back into the model
+    system.magnetostatics.solver = \
+        espressomd.magnetostatics.DipolarDirectSum(prefactor=1.)
+
+    system.integrator.run(100)
+
 .. _Thermal_Stoner_Wohlfarth:
 
 Thermal Stoner–Wohlfarth
