@@ -143,7 +143,14 @@ serialize_and_reduce(Archive &ar, Particle &p, unsigned int data_parts,
     ar & p.q();
 #endif
 #ifdef ESPRESSO_DIPOLES
+#if !(defined(ESPRESSO_LANGEVIN_MAGNETIZATION) ||                              \
+      defined(ESPRESSO_FROELICH_KENNELLY) ||                                   \
+      defined(ESPRESSO_THERMAL_STONER_WOHLFARTH))
+    /* Without magnetization dynamics the dipole moment is a constant set by
+     * the user, so it is enough to exchange it when particles are resorted.
+     * When any model is compiled in it moves to @ref GHOSTTRANS_MAGNETIC. */
     ar & p.dipm();
+#endif
 #endif
 #ifdef ESPRESSO_LB_ELECTROHYDRODYNAMICS
     ar & p.mu_E();
@@ -187,6 +194,13 @@ serialize_and_reduce(Archive &ar, Particle &p, unsigned int data_parts,
     ar & p.pos_last_time_step();
 #endif
   }
+#if defined(ESPRESSO_LANGEVIN_MAGNETIZATION) ||                                \
+    defined(ESPRESSO_FROELICH_KENNELLY) ||                                     \
+    defined(ESPRESSO_THERMAL_STONER_WOHLFARTH)
+  if (data_parts & GHOSTTRANS_MAGNETIC) {
+    ar & p.dipm();
+  }
+#endif
   if (data_parts & GHOSTTRANS_MOMENTUM) {
     ar & p.v();
 #ifdef ESPRESSO_ROTATION

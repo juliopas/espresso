@@ -303,6 +303,46 @@ ParticleHandle::ParticleHandle() {
        },
        [this]() { return get_particle_data(m_pid).dip_fld(); }},
 #endif
+#if defined(ESPRESSO_LANGEVIN_MAGNETIZATION) ||                                \
+    defined(ESPRESSO_FROELICH_KENNELLY)
+      {"dipm_sat",
+       [this](Variant const &value) {
+         if (get_value<double>(value) <= 0.) {
+           throw std::domain_error(
+               error_msg("dipm_sat", "must be a float > 0"));
+         }
+         set_particle_property(&Particle::dipm_sat, value);
+       },
+       [this]() { return get_particle_data(m_pid).dipm_sat(); }},
+      {"mag_susc_0",
+       [this](Variant const &value) {
+         if (get_value<double>(value) < 0.) {
+           throw std::domain_error(
+               error_msg("mag_susc_0", "must be a float >= 0"));
+         }
+         set_particle_property(&Particle::mag_susc_0, value);
+       },
+       [this]() { return get_particle_data(m_pid).mag_susc_0(); }},
+#endif
+#ifdef ESPRESSO_LANGEVIN_MAGNETIZATION
+      {"langevin_magnetization_is_enabled",
+       [this](Variant const &value) {
+         set_particle_property(&Particle::langevin_magnetization_is_enabled,
+                               value);
+       },
+       [this]() {
+         return get_particle_data(m_pid).langevin_magnetization_is_enabled();
+       }},
+#endif
+#ifdef ESPRESSO_FROELICH_KENNELLY
+      {"froelich_kennelly_is_enabled",
+       [this](Variant const &value) {
+         set_particle_property(&Particle::froelich_kennelly_is_enabled, value);
+       },
+       [this]() {
+         return get_particle_data(m_pid).froelich_kennelly_is_enabled();
+       }},
+#endif
 #ifdef ESPRESSO_THERMAL_STONER_WOHLFARTH
       {"magnetodynamics",
        [this](Variant const &value) {

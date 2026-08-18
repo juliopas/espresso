@@ -57,7 +57,16 @@ struct Solver {
   void calc_pressure_long_range() const;
   void calc_long_range_force() const;
   double calc_energy_long_range() const;
+  /** @brief Whether a magnetostatics solver is active. */
+  bool is_solver_set() const;
   Solver();
+
+#ifdef ESPRESSO_DIPOLE_FIELD_TRACKING
+  /**
+   * @brief Whether the active solver populates @ref Particle::dip_fld.
+   */
+  bool provides_dipole_field() const;
+#endif
 #else  // ESPRESSO_DIPOLES
   Solver() = default;
   constexpr double cutoff() const { return inactive_cutoff; }

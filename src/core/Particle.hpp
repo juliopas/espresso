@@ -238,6 +238,18 @@ struct ParticleProperties {
   ThermalStonerWohlfarthParameters magnetodynamics;
 #endif
 
+#if defined(ESPRESSO_LANGEVIN_MAGNETIZATION) ||                                \
+    defined(ESPRESSO_FROELICH_KENNELLY)
+  double dipm_sat = 1.;
+  double mag_susc_0 = 0.1;
+#endif
+#ifdef ESPRESSO_LANGEVIN_MAGNETIZATION
+  bool langevin_magnetization_is_enabled = false;
+#endif
+#ifdef ESPRESSO_FROELICH_KENNELLY
+  bool froelich_kennelly_is_enabled = false;
+#endif
+
   template <class Archive> void serialize(Archive &ar, long int /* version */) {
     ar & identity;
     ar & mol_id;
@@ -285,6 +297,17 @@ struct ParticleProperties {
 #endif
 #ifdef ESPRESSO_THERMAL_STONER_WOHLFARTH
     ar & magnetodynamics;
+#endif
+#if defined(ESPRESSO_LANGEVIN_MAGNETIZATION) ||                                \
+    defined(ESPRESSO_FROELICH_KENNELLY)
+    ar & dipm_sat;
+    ar & mag_susc_0;
+#endif
+#ifdef ESPRESSO_LANGEVIN_MAGNETIZATION
+    ar & langevin_magnetization_is_enabled;
+#endif
+#ifdef ESPRESSO_FROELICH_KENNELLY
+    ar & froelich_kennelly_is_enabled;
 #endif
   }
 };
@@ -564,6 +587,42 @@ public:
   }
   auto &stoner_wohlfarth_dt_incr() { return p.magnetodynamics.dt_incr; }
 #endif // ESPRESSO_THERMAL_STONER_WOHLFARTH
+#if defined(ESPRESSO_LANGEVIN_MAGNETIZATION) ||                                \
+    defined(ESPRESSO_FROELICH_KENNELLY)
+  auto const &dipm_sat() const { return p.dipm_sat; }
+  auto &dipm_sat() { return p.dipm_sat; }
+  auto const &mag_susc_0() const { return p.mag_susc_0; }
+  auto &mag_susc_0() { return p.mag_susc_0; }
+#endif
+#ifdef ESPRESSO_LANGEVIN_MAGNETIZATION
+  auto const &langevin_magnetization_is_enabled() const {
+    return p.langevin_magnetization_is_enabled;
+  }
+  auto &langevin_magnetization_is_enabled() {
+    return p.langevin_magnetization_is_enabled;
+  }
+#endif
+#ifdef ESPRESSO_FROELICH_KENNELLY
+  auto const &froelich_kennelly_is_enabled() const {
+    return p.froelich_kennelly_is_enabled;
+  }
+  auto &froelich_kennelly_is_enabled() {
+    return p.froelich_kennelly_is_enabled;
+  }
+#endif
+  int enabled_magnetodynamics_models() const {
+    int count = 0;
+#ifdef ESPRESSO_LANGEVIN_MAGNETIZATION
+    count += static_cast<int>(langevin_magnetization_is_enabled());
+#endif
+#ifdef ESPRESSO_FROELICH_KENNELLY
+    count += static_cast<int>(froelich_kennelly_is_enabled());
+#endif
+#ifdef ESPRESSO_THERMAL_STONER_WOHLFARTH
+    count += static_cast<int>(stoner_wohlfarth_is_enabled());
+#endif
+    return count;
+  }
 #ifdef ESPRESSO_DIPOLE_FIELD_TRACKING
   auto const &dip_fld() const { return p.dip_fld; }
   auto &dip_fld() { return p.dip_fld; }

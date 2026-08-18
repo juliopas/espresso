@@ -22,25 +22,14 @@
 #ifdef ESPRESSO_THERMAL_STONER_WOHLFARTH
 
 #include "Particle.hpp"
-#include "cell_system/CellStructure.hpp"
-#include "cells.hpp"
-#include "constraints/Constraints.hpp"
-#include "constraints/HomogeneousMagneticField.hpp"
-#include "errorhandling.hpp"
-#include "random.hpp"
+#include "magnetostatics/magnetodynamics.hpp"
 #include "rotation.hpp"
-#include "system/System.hpp"
-#include "thermostat.hpp"
-#include "virtual_sites/relative.hpp"
 
 #include <utils/Vector.hpp>
-#include <utils/uniform.hpp>
 
 #include <nlopt.hpp>
 
-#include <cassert>
 #include <cmath>
-#include <memory>
 #include <numbers>
 #include <utility>
 #include <vector>
@@ -149,26 +138,6 @@ static double get_phi_at_energy_min(double theta, double h, double phi0,
 }
 
 /**
- * @brief Collect external homogeneous magnetic field from active constraints.
- *
- * Iterate over constraints and sum the homogeneous magnetic field vectors
- * provided by @ref Constraints::HomogeneousMagneticField objects.
- *
- * @return The total external homogeneous magnetic field.
- */
-static auto get_external_field(Constraints::Constraints const &constraints) {
-  using HomogeneousMagneticField = ::Constraints::HomogeneousMagneticField;
-  Utils::Vector3d ext_fld = {0., 0., 0.};
-  for (auto const &constraint : constraints) {
-    auto ptr = std::dynamic_pointer_cast<HomogeneousMagneticField>(constraint);
-    if (ptr) {
-      ext_fld += ptr->H();
-    }
-  }
-  return ext_fld;
-}
-
-/**
  * @brief Simplified Stoner-Wohlfarth update in field-free case.
  *
  * @param[in,out] p Virtual particle to update.
@@ -215,9 +184,9 @@ void stoner_wohlfarth_no_field(Particle &p, Utils::Vector3d const &e_k,
  * @param kT Thermal energy from thermostat.
  * @param noise Uniform random number in (0,1) used for the kinetic MC step.
  */
-static void stoner_wohlfarth_main(Particle &p, Utils::Vector3d const &e_k,
-                                  Utils::Vector3d const &ext_fld_dpl,
-                                  double const kT, double const noise) {
+void stoner_wohlfarth_main(Particle &p, Utils::Vector3d const &e_k,
+                           Utils::Vector3d const &ext_fld_dpl, double const kT,
+                           double const noise) {
 
   auto constexpr pi = std::numbers::pi_v<double>;
   auto constexpr pi_half = pi / 2.;
@@ -243,44 +212,6 @@ static void stoner_wohlfarth_main(Particle &p, Utils::Vector3d const &e_k,
       convert_dip_to_quat(mom * p.saturation_magnetization());
   p.dipm() = dipm;
   p.quat() = quat;
-}
-
-/**
- * @brief Run magnetodynamics update for local virtual particles.
- *
- * Iterate over local particles and update the dipole moment of virtual
- * particles according to the thermal Stoner-Wohlfarth model.
- * Collect active homogeneous external magnetic fields from constraints and
- * add the per-particle dipolar contribution before performing either the
- * simplified no-field update or the full thermal Stoner-Wohlfarth update.
- */
-void System::System::integrate_magnetodynamics() {
-  // collect HomogeneousMagneticFields if active
-  auto const ext_fld = get_external_field(*constraints);
-  auto const kT = thermostat->kT;
-  cell_structure->for_each_local_particle([&](Particle &p) {
-    if (not p.is_virtual() or not p.stoner_wohlfarth_is_enabled()) {
-      return;
-    }
-    auto *p_ref = get_reference_particle(*cell_structure, p);
-    if (not p_ref) {
-      return;
-    }
-    assert(thermostat->thermo_switch & THERMO_LANGEVIN);
-    auto const &langevin = *thermostat->langevin;
-    auto const e_k = p_ref->calc_director();
-    auto const ext_fld_dpl = ext_fld + p.dip_fld();
-    auto const random_ints =
-        Random::philox_4_uint64s<RNGSalt::THERMAL_STONER_WOHLFARTH>(
-            langevin.rng_counter(), langevin.rng_seed(), p.id());
-    auto const noise = Utils::uniform(random_ints[0]);
-    if (ext_fld_dpl.norm2() == 0.) {
-      stoner_wohlfarth_no_field(p, e_k, kT, noise);
-    } else {
-      // full Stoner-Wohlfarth update with external + dipolar field
-      stoner_wohlfarth_main(p, e_k, ext_fld_dpl, kT, noise);
-    }
-  });
 }
 
 #endif // ESPRESSO_THERMAL_STONER_WOHLFARTH

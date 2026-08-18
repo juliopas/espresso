@@ -246,10 +246,46 @@ class ParticleHandle(ScriptInterfaceHelper):
            This needs the feature ``DIPOLES``.
 
     dip_fld: (3,) array_like of :obj:`float`
-        Total dipole field value at the position of the particle.
+        Total dipole field value at the position of the particle. Only the
+        direct sum solvers populate this property; it stays zero with any
+        other magnetostatics solver.
 
         .. note::
            This needs the feature ``DIPOLE_FIELD_TRACKING``.
+
+    dipm_sat: :obj:`float`
+        Saturation dipole moment :math:`m_\\mathrm{sat}` of a magnetizable
+        virtual site. Must be strictly positive. See :ref:`Magnetodynamics`.
+
+        .. note::
+           This needs the feature ``LANGEVIN_MAGNETIZATION`` or
+           ``FROELICH_KENNELLY``.
+
+    mag_susc_0: :obj:`float`
+        Initial magnetic susceptibility :math:`\\chi_0` of a magnetizable
+        virtual site, i.e. the slope of its magnetization curve at vanishing
+        field. Must be non-negative. See :ref:`Magnetodynamics`.
+
+        .. note::
+           This needs the feature ``LANGEVIN_MAGNETIZATION`` or
+           ``FROELICH_KENNELLY``.
+
+    langevin_magnetization_is_enabled: :obj:`bool`
+        Whether the dipole moment of this virtual site follows the Langevin
+        magnetization curve of the local field. Only one magnetodynamics model
+        may be enabled per particle. See :ref:`Langevin_magnetization`.
+
+        .. note::
+           This needs the feature ``LANGEVIN_MAGNETIZATION``.
+
+    froelich_kennelly_is_enabled: :obj:`bool`
+        Whether the dipole moment of this virtual site follows the
+        Froelich-Kennelly magnetization curve of the local field. Only one
+        magnetodynamics model may be enabled per particle.
+        See :ref:`Froelich_Kennelly`.
+
+        .. note::
+           This needs the feature ``FROELICH_KENNELLY``.
 
     ext_force: (3,) array_like of :obj:`float`
         An additional external force applied to the particle.

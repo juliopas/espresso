@@ -139,5 +139,29 @@ double Solver::calc_energy_long_range() const {
   return 0.;
 }
 
+bool Solver::is_solver_set() const { return impl->solver.has_value(); }
+
+#ifdef ESPRESSO_DIPOLE_FIELD_TRACKING
+namespace {
+/** @brief Whether a dipolar actor populates @ref Particle::dip_fld. */
+struct ProvidesDipoleField {
+  bool operator()(std::shared_ptr<DipolarDirectSum> const &) const {
+    return true;
+  }
+  template <class T> bool operator()(std::shared_ptr<T> const &) const {
+    return false;
+  }
+};
+} // namespace
+
+bool Solver::provides_dipole_field() const {
+  if (not impl->solver) {
+    return false;
+  }
+  return std::visit(ProvidesDipoleField{}, *impl->solver);
+}
+
+#endif // ESPRESSO_DIPOLE_FIELD_TRACKING
+
 } // namespace Dipoles
 #endif // ESPRESSO_DIPOLES

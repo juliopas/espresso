@@ -564,6 +564,12 @@ unsigned System::get_global_ghost_flags() const {
   /* Position and Properties are always requested. */
   unsigned data_parts = Cells::DATA_PART_POSITION | Cells::DATA_PART_PROPERTIES;
 
+#if defined(ESPRESSO_LANGEVIN_MAGNETIZATION) ||                                \
+    defined(ESPRESSO_FROELICH_KENNELLY) ||                                     \
+    defined(ESPRESSO_THERMAL_STONER_WOHLFARTH)
+  data_parts |= Cells::DATA_PART_MAGNETIC;
+#endif
+
   if (lb.is_solver_set())
     data_parts |= Cells::DATA_PART_MOMENTUM;
 

@@ -311,6 +311,32 @@ void System::System::integrator_sanity_checks() const {
     }
   }
 #endif // ESPRESSO_THERMAL_STONER_WOHLFARTH
+
+#if defined(ESPRESSO_LANGEVIN_MAGNETIZATION) ||                                \
+    defined(ESPRESSO_FROELICH_KENNELLY) ||                                     \
+    defined(ESPRESSO_THERMAL_STONER_WOHLFARTH)
+  {
+    auto has_conflict = false;
+    auto has_model = false;
+    for (auto const &p : cell_structure->local_particles()) {
+      auto const n_models = p.enabled_magnetodynamics_models();
+      has_conflict = has_conflict or (n_models > 1);
+      has_model = has_model or (n_models > 0);
+    }
+    if (has_conflict) {
+      runtimeErrorMsg()
+          << "Particles can only enable one magnetodynamics model at a time";
+    }
+    if (has_model and dipoles.is_solver_set() and
+        not dipoles.provides_dipole_field()) {
+      runtimeErrorMsg()
+          << "The active magnetostatics solver does not provide the dipole "
+             "field that the magnetization dynamics models respond to, so "
+             "mutual magnetization would be silently ignored. Use "
+             "DipolarDirectSum instead";
+    }
+  }
+#endif // magnetization dynamics models
 }
 
 #ifdef ESPRESSO_WALBERLA
@@ -579,6 +605,12 @@ int System::System::integrate(int n_steps, int reuse_forces) {
     }
 #endif
 
+#if defined(ESPRESSO_LANGEVIN_MAGNETIZATION) ||                                \
+    defined(ESPRESSO_FROELICH_KENNELLY) ||                                     \
+    defined(ESPRESSO_THERMAL_STONER_WOHLFARTH)
+    integrate_magnetodynamics(/* initial_step */ true);
+#endif
+
     // Communication step: distribute ghost positions
     cell_structure->update_ghosts_and_resort_particle(get_global_ghost_flags());
 
@@ -693,12 +725,17 @@ int System::System::integrate(int n_steps, int reuse_forces) {
     if (cell_structure->get_resort_particles() >= Cells::RESORT_LOCAL)
       n_verlet_updates++;
 
+    /* Update the magnetic moments before the ghost exchange, so that ghost
+     * copies carry the moments the force calculation is about to use. This
+     * mirrors the ordering of the initial force calculation above. */
+#if defined(ESPRESSO_LANGEVIN_MAGNETIZATION) ||                                \
+    defined(ESPRESSO_FROELICH_KENNELLY) ||                                     \
+    defined(ESPRESSO_THERMAL_STONER_WOHLFARTH)
+    integrate_magnetodynamics(/* initial_step */ false);
+#endif
+
     // Communication step: distribute ghost positions
     cell_structure->update_ghosts_and_resort_particle(get_global_ghost_flags());
-
-#ifdef ESPRESSO_THERMAL_STONER_WOHLFARTH
-    integrate_magnetodynamics();
-#endif
 
     calculate_forces();
 

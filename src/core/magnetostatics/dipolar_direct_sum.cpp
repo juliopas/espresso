@@ -220,6 +220,14 @@ T image_sum(InputIterator begin, InputIterator end, InputIterator it,
   return init;
 }
 
+/**
+ * @brief Collect the particles that take part in the N-square sum.
+ *        Include magnetizable particles, as they must always be
+ *        able to *receive* a dipole field.
+ *
+ * @param box_geo Box geometry.
+ * @param particles Local particles.
+ */
 static auto gather_particle_data(BoxGeometry const &box_geo,
                                  ParticleRange const &particles) {
   auto const &comm = ::comm_cart;
@@ -232,7 +240,9 @@ static auto gather_particle_data(BoxGeometry const &box_geo,
   local_posmom.reserve(particles.size());
 
   for (auto &p : particles) {
-    if (p.dipm() != 0.0) {
+    auto const is_source = (p.dipm() != 0.0);
+    auto const is_receiver = (p.enabled_magnetodynamics_models() > 0);
+    if (is_source or is_receiver) {
       local_particles.emplace_back(&p);
       local_posmom.emplace_back(
           PosMom{box_geo.folded_position(p.pos()), p.calc_dip()});

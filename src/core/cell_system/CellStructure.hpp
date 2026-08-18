@@ -100,8 +100,13 @@ enum DataPart : unsigned {
   DATA_PART_NONE = 0u,       /**< Nothing */
   DATA_PART_PROPERTIES = 1u, /**< Particle::p */
   DATA_PART_POSITION = 2u,   /**< Particle::r */
-  DATA_PART_MOMENTUM = 8u,   /**< Particle::m */
-  DATA_PART_FORCE = 16u,     /**< Particle::f */
+#if defined(ESPRESSO_LANGEVIN_MAGNETIZATION) ||                                \
+    defined(ESPRESSO_FROELICH_KENNELLY) ||                                     \
+    defined(ESPRESSO_THERMAL_STONER_WOHLFARTH)
+  DATA_PART_MAGNETIC = 4u, /**< Particle::p.dipm */
+#endif
+  DATA_PART_MOMENTUM = 8u, /**< Particle::m */
+  DATA_PART_FORCE = 16u,   /**< Particle::f */
 #ifdef ESPRESSO_BOND_CONSTRAINT
   DATA_PART_RATTLE = 32u, /**< Particle::rattle */
 #endif

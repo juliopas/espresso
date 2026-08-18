@@ -128,6 +128,12 @@ enum : unsigned {
   GHOSTTRANS_PROPRTS = 1u,
   /// transfer \ref ParticlePosition
   GHOSTTRANS_POSITION = 2u,
+#if defined(ESPRESSO_LANGEVIN_MAGNETIZATION) ||                                \
+    defined(ESPRESSO_FROELICH_KENNELLY) ||                                     \
+    defined(ESPRESSO_THERMAL_STONER_WOHLFARTH)
+  /// transfer @ref ParticleProperties::dipm alone.
+  GHOSTTRANS_MAGNETIC = 4u,
+#endif
   /// transfer \ref ParticleMomentum
   GHOSTTRANS_MOMENTUM = 8u,
   /// transfer \ref ParticleForce

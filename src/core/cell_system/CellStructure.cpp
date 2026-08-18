@@ -368,6 +368,11 @@ unsigned map_data_parts(unsigned data_parts) {
   return GHOSTTRANS_NONE
          | ((data_parts & DATA_PART_PROPERTIES) ? GHOSTTRANS_PROPRTS : 0u)
          | ((data_parts & DATA_PART_POSITION) ? GHOSTTRANS_POSITION : 0u)
+#if defined(ESPRESSO_LANGEVIN_MAGNETIZATION) ||                                \
+    defined(ESPRESSO_FROELICH_KENNELLY) ||                                     \
+    defined(ESPRESSO_THERMAL_STONER_WOHLFARTH)
+         | ((data_parts & DATA_PART_MAGNETIC) ? GHOSTTRANS_MAGNETIC : 0u)
+#endif
          | ((data_parts & DATA_PART_MOMENTUM) ? GHOSTTRANS_MOMENTUM : 0u)
          | ((data_parts & DATA_PART_FORCE) ? GHOSTTRANS_FORCE : 0u)
 #ifdef ESPRESSO_BOND_CONSTRAINT
