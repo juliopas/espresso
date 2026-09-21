@@ -27,5 +27,5 @@ electrokinetics). Simulations are driven from Python via the `espressomd` module
   this engine: after editing C++, **rebuild** (`cd build && make -j`) then run them via `build/pypresso`.
   (From the espresso workspace, `/add-dir ../SCRIPTS` to reach them.)
 
-**Plans:** tag each step `[quick]`/`[impl]`/`[impl-opus]` (tiers in `~/.claude/CLAUDE.md`).
+**Plans:** tag each step `[quick]`/`[impl]`/`[impl-opus]`/`[impl-fable]` (tiers in `~/.claude/CLAUDE.md`).
 Git remote/sync ops are the user's only (see `~/.claude/CLAUDE.md`).
