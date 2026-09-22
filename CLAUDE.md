@@ -16,6 +16,14 @@ electrokinetics). Simulations are driven from Python via the `espressomd` module
 
 ## Essentials (details in AGENT.md)
 - Build: out-of-source in `build/`; `cd build && make -j$(nproc)`. **Don't re-run `cmake`** unless build files are missing or the user asks.
+- On this machine `make -j$(nproc)` (8 jobs) gets `cc1plus` OOM-killed; use `make -j3`.
+- Two build dirs: `build/` (Release, production, `build/myconfig.hpp`, 19 features) and `build-test/`
+  (RelWithDebInfo + `ADDITIONAL_CHECKS`, `maintainer/configs/maxset.hpp` copied to `build-test/myconfig.hpp`,
+  the one that has the magnetization models). Magnetics tests must run under `build-test`.
+- **The feature config must live at `<build>/myconfig.hpp`.** `cmake/espresso_myconfig.cmake` does not persist a
+  `-D ESPRESSO_MYCONFIG_FILE=...` choice, so an automatic cmake re-run (any `CMakeLists.txt` edit triggers one)
+  silently falls back to `src/config/myconfig-default.hpp` and feature-gated tests start skipping. After a rebuild
+  check `<build>/src/config/include/config/myconfig-final.hpp` if in doubt.
 - Run/test: `cd build && ./pypresso ../testsuite/python/<test>.py` (serial) or `mpirun -n 4 ./pypresso ...` (parallel); aggregate `make check`. C++ unit tests in `src/core/unit_tests/`.
 - Format before done: `maintainer/format/clang-format.sh -i <file.cpp>`, `maintainer/format/autopep8.sh -i <file.py>`. Every source file carries the GPL header.
 - Features compiled in are selected by `myconfig.hpp` (presets in `maintainer/configs/`, defs in `src/config/features.def`).

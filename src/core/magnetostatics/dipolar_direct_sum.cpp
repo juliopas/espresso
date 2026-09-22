@@ -393,6 +393,14 @@ void DipolarDirectSum::add_long_range_forces_cpu() const {
  * @brief Calculate the interaction potential.
  *
  * This employs a parallel N-square loop over all particle pairs.
+ * The energy per simulation cell is
+ * @f$ E = \frac{1}{2} \sum_i \sum_j \sum_n' U_{ij}(n) @f$. Folding the
+ * ordered pairs @f$ i \neq j @f$ onto unordered pairs cancels the factor
+ * @f$ 1/2 @f$ for those, but the interaction of a particle with its own
+ * periodic images (@f$ i = j @f$, @f$ n \neq 0 @f$) has to keep it, since
+ * the images at @f$ +n @f$ and @f$ -n @f$ describe the same bond seen from
+ * both ends. The loop is therefore split accordingly, mirroring the
+ * structure of @ref DipolarDirectSum::add_long_range_forces.
  */
 double DipolarDirectSum::long_range_energy_cpu() const {
   assert(not m_is_gpu);
@@ -416,7 +424,15 @@ double DipolarDirectSum::long_range_energy_cpu() const {
 
   auto u = 0.;
   for (auto it = local_posmom_begin; it != local_posmom_end; ++it) {
-    u = image_sum(it, all_posmom.end(), it, with_replicas, ncut, box_geo, u,
+    /* IA with own images, counted with a factor 1/2 */
+    u = image_sum(it, std::next(it), it, with_replicas, ncut, box_geo, u,
+                  [it](Utils::Vector3d const &rn, Utils::Vector3d const &mj) {
+                    return 0.5 * pair_potential(rn, it->m, mj);
+                  });
+
+    /* IA with all other particles, every pair is visited exactly once */
+    u = image_sum(std::next(it), all_posmom.end(), it, with_replicas, ncut,
+                  box_geo, u,
                   [it](Utils::Vector3d const &rn, Utils::Vector3d const &mj) {
                     return pair_potential(rn, it->m, mj);
                   });

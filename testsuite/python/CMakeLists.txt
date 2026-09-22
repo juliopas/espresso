@@ -300,6 +300,8 @@ python_test(FILE coordinates_folding.py MAX_NUM_PROC 2)
 python_test(FILE ibm.py MAX_NUM_PROC 2)
 python_test(FILE dipolar_mdlc_p3m_scafacos_p2nfft.py MAX_NUM_PROC 1)
 python_test(FILE dipolar_direct_summation.py MAX_NUM_PROC 2 GPU_SLOTS 1)
+python_test(FILE dipolar_direct_summation_replicas.py MAX_NUM_PROC 2 GPU_SLOTS
+            1)
 python_test(FILE dipolar_p3m.py MAX_NUM_PROC 2)
 python_test(FILE dipolar_interface.py MAX_NUM_PROC 2 GPU_SLOTS 1)
 python_test(FILE coulomb_interface.py MAX_NUM_PROC 2 GPU_SLOTS 1)

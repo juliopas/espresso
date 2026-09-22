@@ -127,13 +127,9 @@ __device__ void dipole_ia_force(float const pf, float const dr[3],
   torque2[2] = pf * (a[2] * r3_inv + b[2] * dd);
 }
 
-__device__ float dipole_ia_energy(float pf, float const *r1, float const *r2,
-                                  float const *dip1, float const *dip2,
-                                  float box_l[3], int periodic[3]) {
-  // Distance between particles
-  float dr[3];
-  get_mi_vector_dds(dr, r1, r2, box_l, periodic);
-
+__device__ float dipole_ia_energy_r(float const pf, float const dr[3],
+                                    float const *const dip1,
+                                    float const *const dip2) {
   // Powers of distance
   auto const r_sq = scalar_product(dr, dr);
   auto const r_sq_inv = 1.0f / r_sq;
@@ -149,6 +145,16 @@ __device__ float dipole_ia_energy(float pf, float const *r1, float const *r2,
 
   // Energy
   return pf * (pe1 * r3_inv - pe4 * pe2 * pe3);
+}
+
+__device__ float dipole_ia_energy(float pf, float const *r1, float const *r2,
+                                  float const *dip1, float const *dip2,
+                                  float box_l[3], int periodic[3]) {
+  // Distance between particles
+  float dr[3];
+  get_mi_vector_dds(dr, r1, r2, box_l, periodic);
+
+  return dipole_ia_energy_r(pf, dr, dip1, dip2);
 }
 // LCOV_EXCL_STOP
 
@@ -301,26 +307,71 @@ __device__ void dds_sumReduction(float *input, float *sum) {
 }
 // LCOV_EXCL_STOP
 
-__global__ void DipolarDirectSum_kernel_energy(float pf, unsigned int n,
-                                               float const *const pos,
-                                               float const *const dip,
-                                               float box_l[3], int periodic[3],
-                                               float *energySum) {
+__global__ void
+DipolarDirectSum_kernel_energy(float pf, unsigned int n, float const *const pos,
+                               float const *const dip, float box_l[3],
+                               int periodic[3], int const n_replicas,
+                               float *energySum) {
 
   auto const i = blockIdx.x * blockDim.x + threadIdx.x;
   float sum = 0.0;
   extern __shared__ float res[];
 
   // There is one thread per particle. Each thread computes interactions
-  // with particles whose id is larger than the thread id.
+  // with particles whose id is larger than the thread id, and one half
+  // of the interaction of the particle with its own periodic images.
   // The result for the particle id equal to the thread id is added
   // to global memory at the end.
 
   if (i < n) {
-    // Summation for particle i
-    for (unsigned int j = i + 1; j < n; j++) {
-      sum += dipole_ia_energy(pf, pos + 3 * i, pos + 3 * j, dip + 3 * i,
-                              dip + 3 * j, box_l, periodic);
+    // --- Minimal-image branch (no replicas) ---
+    if (n_replicas == 0) {
+      // Summation for particle i
+      for (unsigned int j = i + 1u; j < n; ++j) {
+        sum += dipole_ia_energy(pf, pos + 3u * i, pos + 3u * j, dip + 3u * i,
+                                dip + 3u * j, box_l, periodic);
+      }
+    } else {
+      // --- Replica branch (n_replicas > 0) ---
+      auto const xi{pos[3u * i + 0u]}, yi{pos[3u * i + 1u]},
+          zi{pos[3u * i + 2u]};
+      auto const *const mi = dip + 3u * i;
+
+      int const nx = periodic[0] * n_replicas;
+      int const ny = periodic[1] * n_replicas;
+      int const nz = periodic[2] * n_replicas;
+
+      // Self-images of i (exclude primary), counted with a factor 1/2
+      for (int dx = -nx; dx <= nx; ++dx) {
+        for (int dy = -ny; dy <= ny; ++dy) {
+          for (int dz = -nz; dz <= nz; ++dz) {
+            if (dx == 0 && dy == 0 && dz == 0)
+              continue;
+            float dr[3] = {static_cast<float>(dx) * box_l[0],
+                           static_cast<float>(dy) * box_l[1],
+                           static_cast<float>(dz) * box_l[2]};
+            sum += 0.5f * dipole_ia_energy_r(pf, dr, mi, mi);
+          }
+        }
+      }
+
+      // Pairwise i <-> j over all images
+      for (unsigned int j = i + 1u; j < n; ++j) {
+        auto const xj{pos[3u * j + 0u]}, yj{pos[3u * j + 1u]},
+            zj{pos[3u * j + 2u]};
+        auto const *const mj = dip + 3u * j;
+
+        for (int dx = -nx; dx <= nx; ++dx) {
+          for (int dy = -ny; dy <= ny; ++dy) {
+            for (int dz = -nz; dz <= nz; ++dz) {
+              float dr[3] = {(xi - xj) + static_cast<float>(dx) * box_l[0],
+                             (yi - yj) + static_cast<float>(dy) * box_l[1],
+                             (zi - zj) + static_cast<float>(dz) * box_l[2]};
+              sum += dipole_ia_energy_r(pf, dr, mi, mj);
+            }
+          }
+        }
+      }
     }
 
     // Save per thread result into block shared mem
@@ -380,7 +431,7 @@ void DipolarDirectSum_kernel_wrapper_energy(float k, unsigned int n,
                                             float const *const pos,
                                             float const *const dip,
                                             float box_l[3], int periodic[3],
-                                            float *E) {
+                                            int n_replicas, float *E) {
 
   unsigned int const bs = 512;
   dim3 grid(1, 1, 1);
@@ -407,7 +458,7 @@ void DipolarDirectSum_kernel_wrapper_energy(float k, unsigned int n,
   // This will sum the energies up to the block level
   KERNELCALL_shared(DipolarDirectSum_kernel_energy, grid, block,
                     bs * sizeof(float), k, n, pos, dip, box_l_gpu, periodic_gpu,
-                    energySum);
+                    n_replicas, energySum);
 
   // Sum the results of all blocks
   // One thread per block in the prev kernel

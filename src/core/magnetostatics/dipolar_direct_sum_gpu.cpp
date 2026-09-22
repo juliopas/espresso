@@ -89,7 +89,8 @@ void DipolarDirectSum::long_range_energy_gpu() const {
   auto const dipoles_device = gpu.get_particle_dipoles_device();
   DipolarDirectSum_kernel_wrapper_energy(static_cast<float>(prefactor), npart,
                                          positions_device, dipoles_device, box,
-                                         periodicity, energy_device);
+                                         periodicity, n_replicas,
+                                         energy_device);
 }
 
 #endif // defined(ESPRESSO_DIPOLES) and defined(ESPRESSO_CUDA)

@@ -26,7 +26,7 @@
 void DipolarDirectSum_kernel_wrapper_energy(float k, unsigned int n,
                                             float const *pos, float const *dip,
                                             float box_l[3], int periodic[3],
-                                            float *E);
+                                            int n_replicas, float *E);
 void DipolarDirectSum_kernel_wrapper_force(float k, unsigned int n,
                                            float const *pos, float const *dip,
                                            float *dip_fld, float *f,
