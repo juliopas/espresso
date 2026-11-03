@@ -15,12 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef UTILS_UNIFORM_HPP
-#define UTILS_UNIFORM_HPP
+#pragma once
 
 #include "utils/device_qualifier.hpp"
 
-#include <cinttypes>
+#include <cstdint>
 #include <limits>
 
 namespace Utils {
@@ -43,5 +42,3 @@ constexpr DEVICE_QUALIFIER inline double uniform(uint64_t in) {
 }
 
 } // namespace Utils
-
-#endif // ESPRESSO_UNIFORM_HPP

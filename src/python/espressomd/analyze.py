@@ -325,6 +325,15 @@ class Analysis(ScriptInterfaceHelper):
             Where [0] contains the midpoints of the bins,
             and [1] contains the values of the minimal distance distribution function.
 
+    potential_energy()
+        Calculate the potential energy of the system, i.e. the total energy
+        minus the kinetic energy.
+
+        Returns
+        -------
+        :obj: `float`
+            Potential energy.
+
     """
     _so_name = "Analysis::Analysis"
     _so_creation_policy = "GLOBAL"
@@ -332,6 +341,7 @@ class Analysis(ScriptInterfaceHelper):
         "linear_momentum",
         "center_of_mass",
         "nbhood",
+        "potential_energy",
         "particle_neighbor_pids",
         "calc_re",
         "calc_rg",
@@ -399,7 +409,11 @@ class Analysis(ScriptInterfaceHelper):
               :math:`E^{\\mathrm{coulomb}}/(3V)`, see :cite:`brown95a`.
             * ``"coulomb", <i>``: Coulomb pressure from particle pairs
               (``i=0``), electrostatics solvers (``i=1``)
-            * ``"dipolar"``: not implemented
+            * ``"dipolar"``: dipolar pressure, how it is calculated depends
+              on the method. It is equivalent to 1/3 of the trace of the
+              dipolar pressure tensor.
+            * ``"dipolar", <i>``: dipolar pressure from particle pairs
+              (``i=0``), magnetostatics solvers (``i=1``)
             * ``"virtual_sites"``: Pressure contribution from virtual sites
             * ``"external_fields"``: external fields contribution
 
@@ -440,7 +454,10 @@ class Analysis(ScriptInterfaceHelper):
               depends on the method
             * ``"coulomb", <i>``: Maxwell pressure tensor from particle pairs
               (``i=0``), electrostatics solvers (``i=1``)
-            * ``"dipolar"``: not implemented
+            * ``"dipolar"``: dipolar pressure tensor, how it is calculated
+              depends on the method
+            * ``"dipolar", <i>``: dipolar pressure tensor from particle pairs
+              (``i=0``), magnetostatics solvers (``i=1``)
             * ``"virtual_sites"``: pressure tensor contribution from virtual sites
             * ``"external_fields"``: external fields contribution
 

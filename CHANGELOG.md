@@ -12,6 +12,20 @@ or [Savannah](https://savannah.nongnu.org/projects/espressomd) until release 3.3
 
 ## [Unreleased]
 
+### Added functionality
+
+* The Lees-Edwards oscillatory shear protocol was extended to support exponential decay (#4966).
+
+### Changed requirements
+
+* OpenMP support is now mandatory (#5276). The Kokkos and Cabana libraries have become
+  hard dependencies. The CMake option `ESPRESSO_BUILD_WITH_SHARED_MEMORY_PARALLELISM`
+  introduced in 5.0.0 to enable OpenMP support at the user's discretion was removed.
+
+### Performance enhancements
+
+* The bond force calculation now leverages shared-memory parallelization (#5244).
+
 ## [5.0.1] - 2026-05-29
 
 ### Bug fixes

@@ -17,7 +17,9 @@
 //! \\author pystencils
 //======================================================================================================================
 
-// kernel generated with pystencils v1.4+1.ge851f4e, lbmpy v1.4+1.ge9efe34, sympy v1.12.1, lbmpy_walberla/pystencils_walberla from waLBerla commit 3247aa7395049ca5bfb69d34d55e45db19fa439c
+// kernel generated with pystencils v1.4+1.ge851f4e, lbmpy v1.4+1.ge9efe34,
+// sympy v1.12.1, lbmpy_walberla/pystencils_walberla from waLBerla commit
+// 3247aa7395049ca5bfb69d34d55e45db19fa439c
 
 #include "Dirichlet_single_precision.h"
 #include "core/DataTypes.h"
@@ -37,7 +39,7 @@ namespace pystencils {
 #pragma GCC diagnostic ignored "-Wconversion"
 #endif
 
-#ifdef __CUDACC__
+#if defined(__CUDACC__) && !defined(__clang__)
 #pragma push
 #ifdef __NVCC_DIAG_PRAGMA_SUPPORT__
 #pragma nv_diag_suppress 177
@@ -47,20 +49,22 @@ namespace pystencils {
 #endif
 // NOLINTBEGIN(readability-non-const-parameter*)
 namespace internal_43f4eae176e72ad2d9db0f0468064c30 {
-static FUNC_PREFIX void dirichlet_single_precision_boundary_Dirichlet_single_precision(float *RESTRICT _data_field, uint8_t *RESTRICT const _data_indexVector, int64_t const _stride_field_0, int64_t const _stride_field_1, int64_t const _stride_field_2, int32_t indexVectorSize) {
-#ifdef _OPENMP
+static FUNC_PREFIX void
+dirichlet_single_precision_boundary_Dirichlet_single_precision(
+    float *RESTRICT _data_field, uint8_t *RESTRICT const _data_indexVector,
+    int64_t const _stride_field_0, int64_t const _stride_field_1,
+    int64_t const _stride_field_2, int32_t indexVectorSize) {
 #pragma omp parallel
-#endif
   {
-#ifdef _OPENMP
 #pragma omp for schedule(static)
-#endif
     for (int64_t ctr_0 = 0; ctr_0 < indexVectorSize; ctr_0 += 1) {
       const int32_t x = *((int32_t *)(&_data_indexVector[20 * ctr_0]));
       const int32_t y = *((int32_t *)(&_data_indexVector[20 * ctr_0 + 4]));
       const int32_t z = *((int32_t *)(&_data_indexVector[20 * ctr_0 + 8]));
 
-      _data_field[_stride_field_0 * x + _stride_field_1 * y + _stride_field_2 * z] = *((float *)(&_data_indexVector[20 * ctr_0 + 16]));
+      _data_field[_stride_field_0 * x + _stride_field_1 * y +
+                  _stride_field_2 * z] =
+          *((float *)(&_data_indexVector[20 * ctr_0 + 16]));
     }
   }
 }
@@ -71,11 +75,12 @@ static FUNC_PREFIX void dirichlet_single_precision_boundary_Dirichlet_single_pre
 #pragma GCC diagnostic pop
 #endif
 
-#ifdef __CUDACC__
+#if defined(__CUDACC__) && !defined(__clang__)
 #pragma pop
 #endif
 
-void Dirichlet_single_precision::run_impl(IBlock *block, IndexVectors::Type type) {
+void Dirichlet_single_precision::run_impl(IBlock *block,
+                                          IndexVectors::Type type) {
   auto *indexVectors = block->getData<IndexVectors>(indexVectorID);
   int32_t indexVectorSize = int32_c(indexVectors->indexVector(type).size());
   if (indexVectorSize == 0)
@@ -92,7 +97,10 @@ void Dirichlet_single_precision::run_impl(IBlock *block, IndexVectors::Type type
   const int64_t _stride_field_0 = int64_t(field->xStride());
   const int64_t _stride_field_1 = int64_t(field->yStride());
   const int64_t _stride_field_2 = int64_t(field->zStride());
-  internal_43f4eae176e72ad2d9db0f0468064c30::dirichlet_single_precision_boundary_Dirichlet_single_precision(_data_field, _data_indexVector, _stride_field_0, _stride_field_1, _stride_field_2, indexVectorSize);
+  internal_43f4eae176e72ad2d9db0f0468064c30::
+      dirichlet_single_precision_boundary_Dirichlet_single_precision(
+          _data_field, _data_indexVector, _stride_field_0, _stride_field_1,
+          _stride_field_2, indexVectorSize);
 }
 
 void Dirichlet_single_precision::run(IBlock *block) {

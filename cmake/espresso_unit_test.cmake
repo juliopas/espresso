@@ -52,6 +52,7 @@ function(espresso_unit_test_executable)
   if(ESPRESSO_BUILD_WITH_CUDA)
     espresso_add_cuda_rpaths(${TEST_NAME}) # for GPU-aware MPI vendors
   endif()
+  espresso_set_kokkos_properties_on_source_files(${TEST_NAME})
 endfunction()
 
 # register the executable of a unit test in the CTest suite
@@ -85,6 +86,21 @@ function(espresso_unit_test_register)
   if(${TEST_NUM_THREADS} GREATER ${ESPRESSO_TEST_NT})
     set(TEST_NUM_THREADS ${ESPRESSO_TEST_NT})
   endif()
+  if(ESPRESSO_BUILD_WITH_ASAN)
+    # disable memory patcher (https://github.com/open-mpi/ompi/issues/12819)
+    list(APPEND TEST_ENV_VARIABLES "OMPI_MCA_memory=^patcher")
+    # use PMIx hash-table storage instead of a shared-memory segment to avoid
+    # conflicts with ASAN address-space layout randomization
+    list(APPEND TEST_ENV_VARIABLES "PMIX_MCA_gds=hash")
+    # suppress OpenMPI memory leaks diagnostics
+    list(APPEND TEST_ENV_VARIABLES "LSAN_OPTIONS=suppressions=${CMAKE_SOURCE_DIR}/maintainer/CI/lsan.supp:print_suppressions=0")
+    list(APPEND TEST_ENV_VARIABLES "ASAN_OPTIONS=detect_leaks=0")
+  endif()
+  list(APPEND TEST_ENV_VARIABLES "OMPI_MCA_hwloc_base_binding_policy=none")
+  list(APPEND TEST_ENV_VARIABLES "PRTE_MCA_hwloc_default_binding_policy=none")
+  list(APPEND TEST_ENV_VARIABLES "HYDRA_BINDING=none")
+  list(APPEND TEST_ENV_VARIABLES "OMP_PROC_BIND=false")
+  list(APPEND TEST_ENV_VARIABLES "OMP_NUM_THREADS=${TEST_NUM_THREADS}")
 
   if(ESPRESSO_WARNINGS_ARE_ERRORS)
     set(SANITIZERS_HALT_ON_ERROR "halt_on_error=1")
@@ -94,17 +110,7 @@ function(espresso_unit_test_register)
   list(APPEND TEST_ENV_VARIABLES "UBSAN_OPTIONS=suppressions=${CMAKE_SOURCE_DIR}/maintainer/CI/ubsan.supp:${SANITIZERS_HALT_ON_ERROR}:print_stacktrace=1")
   list(APPEND TEST_ENV_VARIABLES "ASAN_OPTIONS=${SANITIZERS_HALT_ON_ERROR}:detect_leaks=0:allocator_may_return_null=1")
   list(APPEND TEST_ENV_VARIABLES "MSAN_OPTIONS=${SANITIZERS_HALT_ON_ERROR}")
-  if(NOT DEFINED TEST_NUM_PROC AND ESPRESSO_MPIEXEC_GUARD_SINGLETON_NUMA)
-    list(APPEND TEST_ENV_VARIABLES "OMPI_MCA_hwloc_base_binding_policy=none")
-  endif()
-  list(APPEND TEST_ENV_VARIABLES "OMP_PROC_BIND=false" "OMP_NUM_THREADS=${TEST_NUM_THREADS}")
-  set(TEST_NUM_CORES 1)
-  if(DEFINED TEST_NUM_PROC)
-    set(TEST_NUM_CORES ${TEST_NUM_PROC})
-  endif()
-  if(ESPRESSO_BUILD_WITH_SHARED_MEMORY_PARALLELISM)
-    math(EXPR TEST_NUM_CORES "${TEST_NUM_CORES} * ${TEST_NUM_THREADS}")
-  endif()
+  math(EXPR TEST_NUM_CORES "${TEST_NUM_PROC} * ${TEST_NUM_THREADS}")
   set_tests_properties(
     ${TEST_NAME} PROPERTIES ENVIRONMENT "${TEST_ENV_VARIABLES}"
                             PROCESSORS ${TEST_NUM_CORES}

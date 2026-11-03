@@ -73,6 +73,8 @@ struct InstantaneousPressure;
 #ifdef ESPRESSO_CUDA
 class GpuParticleData;
 #endif
+struct EnergyObservable;
+struct PressureObservable;
 
 namespace System {
 
@@ -137,9 +139,7 @@ public:
 
   /** @brief Rebuild cell lists. Use e.g. after a skin change. */
   void rebuild_cell_structure();
-#ifdef ESPRESSO_SHARED_MEMORY_PARALLELISM
   void rebuild_aosoa();
-#endif
 
   /** @brief Calculate the maximal cutoff of all interactions. */
   double maximal_cutoff() const;
@@ -148,6 +148,14 @@ public:
   double get_interaction_range() const;
 
   unsigned get_global_ghost_flags() const;
+
+  /**
+   * @brief Returns the ghost flags for the force-reduce step.
+   *
+   * Always includes GHOSTTRANS_FORCE; adds GHOSTTRANS_TORQUE when orientation
+   * physics is active (same whitelist as get_global_ghost_flags for QUAT).
+   */
+  unsigned get_force_reduce_ghost_flags() const;
 
   /** Check electrostatic and magnetostatic methods are properly initialized.
    *  @return true if sanity checks failed.
@@ -358,8 +366,8 @@ protected:
    * to be available on the same node (through ghosts).
    */
   double min_global_cut;
-  std::unique_ptr<Observable_stat> m_obs_energy;
-  std::unique_ptr<Observable_stat> m_obs_pressure;
+  std::shared_ptr<EnergyObservable> m_obs_energy;
+  std::shared_ptr<PressureObservable> m_obs_pressure;
 
   void update_local_geo();
 #ifdef ESPRESSO_ELECTROSTATICS

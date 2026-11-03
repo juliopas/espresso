@@ -262,9 +262,8 @@ extra arguments are passed to the ``mpiexec`` program.
 On cluster computers, it might be necessary to load the MPI library with
 ``module load openmpi`` or similar.
 
-On modern NUMA architectures, |es| can leverage shared-memory parallelism
-(SMP) using the `OpenMP <https://www.openmp.org>`__ programming model.
-This is enabled via the CMake option ``-D SHARED_MEMORY_PARALLELISM=ON``.
+|es| leverages shared-memory parallelism (SMP) using
+the `OpenMP <https://www.openmp.org>`__ programming model.
 To run a simulation with 4 OpenMP threads, use the following syntax:
 
 .. code-block:: bash
@@ -990,6 +989,20 @@ use a :class:`~espressomd.profiler.Caliper` object to fence code blocks:
     energies = system.analysis.energy()
     cali.end_section(label="calc_energies")
 
+By default, ``CALI_CONFIG=runtime-report`` only reports nested regions.
+Asynchronous regions are not part of the tree and need to be queried individually:
+
+.. code-block:: none
+
+    CALI_CONFIG=event-trace,output=espresso-%mpi.rank%.cali mpiexec -n 2 ./pypresso script.py
+    cali-query -q "SELECT region, ghosts_reduce_forces_async, \
+                          sum(time.duration.ns) AS time_ns, \
+                          percent_total(time.duration.ns) AS \"Time %\"  \
+                   WHERE ghosts_reduce_forces_async \
+                   GROUP BY region, ghosts_reduce_forces_async \
+                   FORMAT table ORDER BY time_ns DESC" \
+               espresso-*.cali
+
 .. _Valgrind:
 
 Valgrind
@@ -1290,7 +1303,7 @@ Pass option ``--native`` to capture C++ function names; to get accurate traces
 with minimal overhead, build |es| with
 ``-D CMAKE_CXX_FLAGS="-g -fno-omit-frame-pointer" -D CMAKE_BUILD_TYPE=Release``.
 
-To record samples in a format that can be analyzed by AI agents, run::
+To record samples in a format that can be analyzed by AI agents, run:
 
 .. code-block:: bash
 

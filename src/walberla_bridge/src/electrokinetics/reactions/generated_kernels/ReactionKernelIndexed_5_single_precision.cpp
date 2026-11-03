@@ -17,7 +17,9 @@
 //! \\author pystencils
 //======================================================================================================================
 
-// kernel generated with pystencils v1.4+1.ge851f4e, lbmpy v1.4+1.ge9efe34, sympy v1.12.1, lbmpy_walberla/pystencils_walberla from waLBerla commit 3247aa7395049ca5bfb69d34d55e45db19fa439c
+// kernel generated with pystencils v1.4+1.ge851f4e, lbmpy v1.4+1.ge9efe34,
+// sympy v1.12.1, lbmpy_walberla/pystencils_walberla from waLBerla commit
+// 3247aa7395049ca5bfb69d34d55e45db19fa439c
 
 #include "ReactionKernelIndexed_5_single_precision.h"
 #include "core/DataTypes.h"
@@ -37,7 +39,7 @@ namespace pystencils {
 #pragma GCC diagnostic ignored "-Wconversion"
 #endif
 
-#ifdef __CUDACC__
+#if defined(__CUDACC__) and !defined(__clang__)
 #pragma push
 #ifdef __NVCC_DIAG_PRAGMA_SUPPORT__
 #pragma nv_diag_suppress 177
@@ -47,30 +49,59 @@ namespace pystencils {
 #endif
 // NOLINTBEGIN(readability-non-const-parameter*)
 namespace internal_c656da8359b8f47f0007107280d91a58 {
-static FUNC_PREFIX void reactionkernelindexed_5_single_precision_boundary_ReactionKernelIndexed_5_single_precision(uint8_t *RESTRICT const _data_indexVector, float *RESTRICT _data_rho_0, float *RESTRICT _data_rho_1, float *RESTRICT _data_rho_2, float *RESTRICT _data_rho_3, float *RESTRICT _data_rho_4, int64_t const _stride_rho_0_0, int64_t const _stride_rho_0_1, int64_t const _stride_rho_0_2, int64_t const _stride_rho_1_0, int64_t const _stride_rho_1_1, int64_t const _stride_rho_1_2, int64_t const _stride_rho_2_0, int64_t const _stride_rho_2_1, int64_t const _stride_rho_2_2, int64_t const _stride_rho_3_0, int64_t const _stride_rho_3_1, int64_t const _stride_rho_3_2, int64_t const _stride_rho_4_0, int64_t const _stride_rho_4_1, int64_t const _stride_rho_4_2, int32_t indexVectorSize, float order_0, float order_1, float order_2, float order_3, float order_4, float rate_coefficient, float stoech_0, float stoech_1, float stoech_2, float stoech_3, float stoech_4) {
-#ifdef _OPENMP
+static FUNC_PREFIX void
+reactionkernelindexed_5_single_precision_boundary_ReactionKernelIndexed_5_single_precision(
+    uint8_t *RESTRICT const _data_indexVector, float *RESTRICT _data_rho_0,
+    float *RESTRICT _data_rho_1, float *RESTRICT _data_rho_2,
+    float *RESTRICT _data_rho_3, float *RESTRICT _data_rho_4,
+    int64_t const _stride_rho_0_0, int64_t const _stride_rho_0_1,
+    int64_t const _stride_rho_0_2, int64_t const _stride_rho_1_0,
+    int64_t const _stride_rho_1_1, int64_t const _stride_rho_1_2,
+    int64_t const _stride_rho_2_0, int64_t const _stride_rho_2_1,
+    int64_t const _stride_rho_2_2, int64_t const _stride_rho_3_0,
+    int64_t const _stride_rho_3_1, int64_t const _stride_rho_3_2,
+    int64_t const _stride_rho_4_0, int64_t const _stride_rho_4_1,
+    int64_t const _stride_rho_4_2, int32_t indexVectorSize, float order_0,
+    float order_1, float order_2, float order_3, float order_4,
+    float rate_coefficient, float stoech_0, float stoech_1, float stoech_2,
+    float stoech_3, float stoech_4) {
 #pragma omp parallel
-#endif
   {
-#ifdef _OPENMP
 #pragma omp for schedule(static)
-#endif
     for (int64_t ctr_0 = 0; ctr_0 < indexVectorSize; ctr_0 += 1) {
       const int32_t x = *((int32_t *)(&_data_indexVector[12 * ctr_0]));
       const int32_t y = *((int32_t *)(&_data_indexVector[12 * ctr_0 + 4]));
       const int32_t z = *((int32_t *)(&_data_indexVector[12 * ctr_0 + 8]));
 
-      const float local_rho_0 = _data_rho_0[_stride_rho_0_0 * x + _stride_rho_0_1 * y + _stride_rho_0_2 * z];
-      const float local_rho_1 = _data_rho_1[_stride_rho_1_0 * x + _stride_rho_1_1 * y + _stride_rho_1_2 * z];
-      const float local_rho_2 = _data_rho_2[_stride_rho_2_0 * x + _stride_rho_2_1 * y + _stride_rho_2_2 * z];
-      const float local_rho_3 = _data_rho_3[_stride_rho_3_0 * x + _stride_rho_3_1 * y + _stride_rho_3_2 * z];
-      const float local_rho_4 = _data_rho_4[_stride_rho_4_0 * x + _stride_rho_4_1 * y + _stride_rho_4_2 * z];
-      const float rate_factor = rate_coefficient * powf(local_rho_0, order_0) * powf(local_rho_1, order_1) * powf(local_rho_2, order_2) * powf(local_rho_3, order_3) * powf(local_rho_4, order_4);
-      _data_rho_0[_stride_rho_0_0 * x + _stride_rho_0_1 * y + _stride_rho_0_2 * z] = local_rho_0 + rate_factor * stoech_0;
-      _data_rho_1[_stride_rho_1_0 * x + _stride_rho_1_1 * y + _stride_rho_1_2 * z] = local_rho_1 + rate_factor * stoech_1;
-      _data_rho_2[_stride_rho_2_0 * x + _stride_rho_2_1 * y + _stride_rho_2_2 * z] = local_rho_2 + rate_factor * stoech_2;
-      _data_rho_3[_stride_rho_3_0 * x + _stride_rho_3_1 * y + _stride_rho_3_2 * z] = local_rho_3 + rate_factor * stoech_3;
-      _data_rho_4[_stride_rho_4_0 * x + _stride_rho_4_1 * y + _stride_rho_4_2 * z] = local_rho_4 + rate_factor * stoech_4;
+      const float local_rho_0 =
+          _data_rho_0[_stride_rho_0_0 * x + _stride_rho_0_1 * y +
+                      _stride_rho_0_2 * z];
+      const float local_rho_1 =
+          _data_rho_1[_stride_rho_1_0 * x + _stride_rho_1_1 * y +
+                      _stride_rho_1_2 * z];
+      const float local_rho_2 =
+          _data_rho_2[_stride_rho_2_0 * x + _stride_rho_2_1 * y +
+                      _stride_rho_2_2 * z];
+      const float local_rho_3 =
+          _data_rho_3[_stride_rho_3_0 * x + _stride_rho_3_1 * y +
+                      _stride_rho_3_2 * z];
+      const float local_rho_4 =
+          _data_rho_4[_stride_rho_4_0 * x + _stride_rho_4_1 * y +
+                      _stride_rho_4_2 * z];
+      const float rate_factor =
+          rate_coefficient * powf(local_rho_0, order_0) *
+          powf(local_rho_1, order_1) * powf(local_rho_2, order_2) *
+          powf(local_rho_3, order_3) * powf(local_rho_4, order_4);
+      _data_rho_0[_stride_rho_0_0 * x + _stride_rho_0_1 * y +
+                  _stride_rho_0_2 * z] = local_rho_0 + rate_factor * stoech_0;
+      _data_rho_1[_stride_rho_1_0 * x + _stride_rho_1_1 * y +
+                  _stride_rho_1_2 * z] = local_rho_1 + rate_factor * stoech_1;
+      _data_rho_2[_stride_rho_2_0 * x + _stride_rho_2_1 * y +
+                  _stride_rho_2_2 * z] = local_rho_2 + rate_factor * stoech_2;
+      _data_rho_3[_stride_rho_3_0 * x + _stride_rho_3_1 * y +
+                  _stride_rho_3_2 * z] = local_rho_3 + rate_factor * stoech_3;
+      _data_rho_4[_stride_rho_4_0 * x + _stride_rho_4_1 * y +
+                  _stride_rho_4_2 * z] = local_rho_4 + rate_factor * stoech_4;
     }
   }
 }
@@ -81,11 +112,12 @@ static FUNC_PREFIX void reactionkernelindexed_5_single_precision_boundary_Reacti
 #pragma GCC diagnostic pop
 #endif
 
-#ifdef __CUDACC__
+#if defined(__CUDACC__) and !defined(__clang__)
 #pragma pop
 #endif
 
-void ReactionKernelIndexed_5_single_precision::run_impl(IBlock *block, IndexVectors::Type type) {
+void ReactionKernelIndexed_5_single_precision::run_impl(
+    IBlock *block, IndexVectors::Type type) {
   auto *indexVectors = block->uncheckedFastGetData<IndexVectors>(indexVectorID);
   int32_t indexVectorSize = int32_c(indexVectors->indexVector(type).size());
   if (indexVectorSize == 0)
@@ -137,7 +169,15 @@ void ReactionKernelIndexed_5_single_precision::run_impl(IBlock *block, IndexVect
   const int64_t _stride_rho_4_0 = int64_t(rho_4->xStride());
   const int64_t _stride_rho_4_1 = int64_t(rho_4->yStride());
   const int64_t _stride_rho_4_2 = int64_t(rho_4->zStride());
-  internal_c656da8359b8f47f0007107280d91a58::reactionkernelindexed_5_single_precision_boundary_ReactionKernelIndexed_5_single_precision(_data_indexVector, _data_rho_0, _data_rho_1, _data_rho_2, _data_rho_3, _data_rho_4, _stride_rho_0_0, _stride_rho_0_1, _stride_rho_0_2, _stride_rho_1_0, _stride_rho_1_1, _stride_rho_1_2, _stride_rho_2_0, _stride_rho_2_1, _stride_rho_2_2, _stride_rho_3_0, _stride_rho_3_1, _stride_rho_3_2, _stride_rho_4_0, _stride_rho_4_1, _stride_rho_4_2, indexVectorSize, order_0, order_1, order_2, order_3, order_4, rate_coefficient, stoech_0, stoech_1, stoech_2, stoech_3, stoech_4);
+  internal_c656da8359b8f47f0007107280d91a58::
+      reactionkernelindexed_5_single_precision_boundary_ReactionKernelIndexed_5_single_precision(
+          _data_indexVector, _data_rho_0, _data_rho_1, _data_rho_2, _data_rho_3,
+          _data_rho_4, _stride_rho_0_0, _stride_rho_0_1, _stride_rho_0_2,
+          _stride_rho_1_0, _stride_rho_1_1, _stride_rho_1_2, _stride_rho_2_0,
+          _stride_rho_2_1, _stride_rho_2_2, _stride_rho_3_0, _stride_rho_3_1,
+          _stride_rho_3_2, _stride_rho_4_0, _stride_rho_4_1, _stride_rho_4_2,
+          indexVectorSize, order_0, order_1, order_2, order_3, order_4,
+          rate_coefficient, stoech_0, stoech_1, stoech_2, stoech_3, stoech_4);
 }
 
 void ReactionKernelIndexed_5_single_precision::run(IBlock *block) {

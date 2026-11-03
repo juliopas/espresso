@@ -101,10 +101,7 @@ Utils::Vector3d dpd_pair_force(
   return force;
 }
 
-Utils::Vector9d dpd_pressure_local(System::System &system) {
-  if (not system.thermostat->dpd) {
-    return {};
-  }
+static auto dpd_pressure_local(System::System &system) {
   auto const &box_geo = *system.box_geo;
   auto const &nonbonded_ias = *system.nonbonded_ias;
   auto &cell_structure = *system.cell_structure;
@@ -115,14 +112,6 @@ Utils::Vector9d dpd_pressure_local(System::System &system) {
   cell_structure.non_bonded_loop([&pressure, &box_geo, &nonbonded_ias,
                                   &dpd](Particle const &p1, Particle const &p2,
                                         Distance const &d) {
-#ifdef ESPRESSO_EXCLUSIONS
-    auto const do_nonbonded_flag = do_nonbonded(p1, p2);
-#else
-    auto constexpr do_nonbonded_flag = true;
-#endif
-    if (not do_nonbonded_flag) {
-      return;
-    }
     auto const v21 =
         box_geo.velocity_difference(p1.pos(), p2.pos(), p1.v(), p2.v());
 
@@ -145,7 +134,7 @@ Utils::Vector9d dpd_pressure_local(System::System &system) {
     pressure += tensor_product(d.vec21, f);
   });
 
-  return Utils::flatten(pressure);
+  return pressure;
 }
 
 /**
@@ -165,12 +154,12 @@ Utils::Vector9d dpd_pressure_local(System::System &system) {
  */
 Utils::Vector9d dpd_pressure(System::System &system,
                              boost::mpi::communicator const &comm) {
-  auto local_pressure = dpd_pressure_local(system);
-  decltype(local_pressure) global_pressure{};
+  auto const local_pressure = dpd_pressure_local(system);
+  std::remove_const_t<decltype(local_pressure)> global_pressure{};
 
   boost::mpi::reduce(comm, local_pressure, global_pressure, std::plus<>(), 0);
 
-  return global_pressure / system.box_geo->volume();
+  return Utils::flatten(global_pressure) / system.box_geo->volume();
 }
 
 #endif // ESPRESSO_DPD

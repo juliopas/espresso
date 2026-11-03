@@ -17,7 +17,9 @@
 //! \\author pystencils
 //======================================================================================================================
 
-// kernel generated with pystencils v1.4+1.ge851f4e, lbmpy v1.4+1.ge9efe34, sympy v1.12.1, lbmpy_walberla/pystencils_walberla from waLBerla commit 3247aa7395049ca5bfb69d34d55e45db19fa439c
+// kernel generated with pystencils v1.4+1.ge851f4e, lbmpy v1.4+1.ge9efe34,
+// sympy v1.12.1, lbmpy_walberla/pystencils_walberla from waLBerla commit
+// 3247aa7395049ca5bfb69d34d55e45db19fa439c
 
 #include "FixedFlux_double_precision.h"
 #include "core/DataTypes.h"
@@ -37,7 +39,7 @@ namespace pystencils {
 #pragma GCC diagnostic ignored "-Wconversion"
 #endif
 
-#ifdef __CUDACC__
+#if defined(__CUDACC__) && !defined(__clang__)
 #pragma push
 #ifdef __NVCC_DIAG_PRAGMA_SUPPORT__
 #pragma nv_diag_suppress 177
@@ -47,14 +49,15 @@ namespace pystencils {
 #endif
 // NOLINTBEGIN(readability-non-const-parameter*)
 namespace internal_bdec58bfeb737088cd218660bd069d85 {
-static FUNC_PREFIX void fixedflux_double_precision_boundary_FixedFlux_double_precision(double *RESTRICT const _data_flux, uint8_t *RESTRICT const _data_indexVector, int64_t const _stride_flux_0, int64_t const _stride_flux_1, int64_t const _stride_flux_2, int64_t const _stride_flux_3, int32_t indexVectorSize) {
-#ifdef _OPENMP
+static FUNC_PREFIX void
+fixedflux_double_precision_boundary_FixedFlux_double_precision(
+    double *RESTRICT const _data_flux,
+    uint8_t *RESTRICT const _data_indexVector, int64_t const _stride_flux_0,
+    int64_t const _stride_flux_1, int64_t const _stride_flux_2,
+    int64_t const _stride_flux_3, int32_t indexVectorSize) {
 #pragma omp parallel
-#endif
   {
-#ifdef _OPENMP
 #pragma omp for schedule(static)
-#endif
     for (int64_t ctr_0 = 0; ctr_0 < indexVectorSize; ctr_0 += 1) {
       const int32_t x = *((int32_t *)(&_data_indexVector[40 * ctr_0]));
       const int32_t y = *((int32_t *)(&_data_indexVector[40 * ctr_0 + 4]));
@@ -62,82 +65,349 @@ static FUNC_PREFIX void fixedflux_double_precision_boundary_FixedFlux_double_pre
 
       const int32_t dir = *((int32_t *)(&_data_indexVector[40 * ctr_0 + 12]));
       if (((dir) == (26))) {
-        _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_2 * z + 9 * _stride_flux_3] = -0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 16])) - 0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 24])) - 0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 32]));
+        _data_flux[_stride_flux_0 * x + _stride_flux_1 * y +
+                   _stride_flux_2 * z + 9 * _stride_flux_3] =
+            -0.1111111111111111 *
+                *((double *)(&_data_indexVector[40 * ctr_0 + 16])) -
+            0.1111111111111111 *
+                *((double *)(&_data_indexVector[40 * ctr_0 + 24])) -
+            0.1111111111111111 *
+                *((double *)(&_data_indexVector[40 * ctr_0 + 32]));
       } else {
         if (((dir) == (25))) {
-          _data_flux[_stride_flux_0 * x + _stride_flux_0 + _stride_flux_1 * y - _stride_flux_1 + _stride_flux_2 * z - _stride_flux_2 + 12 * _stride_flux_3] = -0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 16])) + 0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 24])) + 0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 32]));
+          _data_flux[_stride_flux_0 * x + _stride_flux_0 + _stride_flux_1 * y -
+                     _stride_flux_1 + _stride_flux_2 * z - _stride_flux_2 +
+                     12 * _stride_flux_3] =
+              -0.1111111111111111 *
+                  *((double *)(&_data_indexVector[40 * ctr_0 + 16])) +
+              0.1111111111111111 *
+                  *((double *)(&_data_indexVector[40 * ctr_0 + 24])) +
+              0.1111111111111111 *
+                  *((double *)(&_data_indexVector[40 * ctr_0 + 32]));
         } else {
           if (((dir) == (24))) {
-            _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_2 * z + 11 * _stride_flux_3] = -0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 16])) - 0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 32])) + 0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 24]));
+            _data_flux[_stride_flux_0 * x + _stride_flux_1 * y +
+                       _stride_flux_2 * z + 11 * _stride_flux_3] =
+                -0.1111111111111111 *
+                    *((double *)(&_data_indexVector[40 * ctr_0 + 16])) -
+                0.1111111111111111 *
+                    *((double *)(&_data_indexVector[40 * ctr_0 + 32])) +
+                0.1111111111111111 *
+                    *((double *)(&_data_indexVector[40 * ctr_0 + 24]));
           } else {
             if (((dir) == (23))) {
-              _data_flux[_stride_flux_0 * x + _stride_flux_0 + _stride_flux_1 * y + _stride_flux_1 + _stride_flux_2 * z - _stride_flux_2 + 10 * _stride_flux_3] = -0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 16])) - 0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 24])) + 0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 32]));
+              _data_flux[_stride_flux_0 * x + _stride_flux_0 +
+                         _stride_flux_1 * y + _stride_flux_1 +
+                         _stride_flux_2 * z - _stride_flux_2 +
+                         10 * _stride_flux_3] =
+                  -0.1111111111111111 *
+                      *((double *)(&_data_indexVector[40 * ctr_0 + 16])) -
+                  0.1111111111111111 *
+                      *((double *)(&_data_indexVector[40 * ctr_0 + 24])) +
+                  0.1111111111111111 *
+                      *((double *)(&_data_indexVector[40 * ctr_0 + 32]));
             } else {
               if (((dir) == (22))) {
-                _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_2 * z + 10 * _stride_flux_3] = -0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 16])) - 0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 24])) + 0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 32]));
+                _data_flux[_stride_flux_0 * x + _stride_flux_1 * y +
+                           _stride_flux_2 * z + 10 * _stride_flux_3] =
+                    -0.1111111111111111 *
+                        *((double *)(&_data_indexVector[40 * ctr_0 + 16])) -
+                    0.1111111111111111 *
+                        *((double *)(&_data_indexVector[40 * ctr_0 + 24])) +
+                    0.1111111111111111 *
+                        *((double *)(&_data_indexVector[40 * ctr_0 + 32]));
               } else {
                 if (((dir) == (21))) {
-                  _data_flux[_stride_flux_0 * x + _stride_flux_0 + _stride_flux_1 * y - _stride_flux_1 + _stride_flux_2 * z + _stride_flux_2 + 11 * _stride_flux_3] = -0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 16])) - 0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 32])) + 0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 24]));
+                  _data_flux[_stride_flux_0 * x + _stride_flux_0 +
+                             _stride_flux_1 * y - _stride_flux_1 +
+                             _stride_flux_2 * z + _stride_flux_2 +
+                             11 * _stride_flux_3] =
+                      -0.1111111111111111 *
+                          *((double *)(&_data_indexVector[40 * ctr_0 + 16])) -
+                      0.1111111111111111 *
+                          *((double *)(&_data_indexVector[40 * ctr_0 + 32])) +
+                      0.1111111111111111 *
+                          *((double *)(&_data_indexVector[40 * ctr_0 + 24]));
                 } else {
                   if (((dir) == (20))) {
-                    _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_2 * z + 12 * _stride_flux_3] = -0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 16])) + 0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 24])) + 0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 32]));
+                    _data_flux[_stride_flux_0 * x + _stride_flux_1 * y +
+                               _stride_flux_2 * z + 12 * _stride_flux_3] =
+                        -0.1111111111111111 *
+                            *((double *)(&_data_indexVector[40 * ctr_0 + 16])) +
+                        0.1111111111111111 *
+                            *((double *)(&_data_indexVector[40 * ctr_0 + 24])) +
+                        0.1111111111111111 *
+                            *((double *)(&_data_indexVector[40 * ctr_0 + 32]));
                   } else {
                     if (((dir) == (19))) {
-                      _data_flux[_stride_flux_0 * x + _stride_flux_0 + _stride_flux_1 * y + _stride_flux_1 + _stride_flux_2 * z + _stride_flux_2 + 9 * _stride_flux_3] = -0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 16])) - 0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 24])) - 0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 32]));
+                      _data_flux[_stride_flux_0 * x + _stride_flux_0 +
+                                 _stride_flux_1 * y + _stride_flux_1 +
+                                 _stride_flux_2 * z + _stride_flux_2 +
+                                 9 * _stride_flux_3] =
+                          -0.1111111111111111 *
+                              *((double
+                                     *)(&_data_indexVector[40 * ctr_0 + 16])) -
+                          0.1111111111111111 *
+                              *((double
+                                     *)(&_data_indexVector[40 * ctr_0 + 24])) -
+                          0.1111111111111111 *
+                              *((double
+                                     *)(&_data_indexVector[40 * ctr_0 + 32]));
                     } else {
                       if (((dir) == (18))) {
-                        _data_flux[_stride_flux_0 * x + _stride_flux_0 + _stride_flux_1 * y + _stride_flux_2 * z - _stride_flux_2 + 6 * _stride_flux_3] = -0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 16])) + 0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 32]));
+                        _data_flux[_stride_flux_0 * x + _stride_flux_0 +
+                                   _stride_flux_1 * y + _stride_flux_2 * z -
+                                   _stride_flux_2 + 6 * _stride_flux_3] =
+                            -0.1111111111111111 *
+                                *((double *)(&_data_indexVector[40 * ctr_0 +
+                                                                16])) +
+                            0.1111111111111111 *
+                                *((double
+                                       *)(&_data_indexVector[40 * ctr_0 + 32]));
                       } else {
                         if (((dir) == (17))) {
-                          _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_2 * z + 5 * _stride_flux_3] = -0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 16])) - 0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 32]));
+                          _data_flux[_stride_flux_0 * x + _stride_flux_1 * y +
+                                     _stride_flux_2 * z + 5 * _stride_flux_3] =
+                              -0.1111111111111111 *
+                                  *((double *)(&_data_indexVector[40 * ctr_0 +
+                                                                  16])) -
+                              0.1111111111111111 *
+                                  *((double *)(&_data_indexVector[40 * ctr_0 +
+                                                                  32]));
                         } else {
                           if (((dir) == (16))) {
-                            _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_2 * z + 7 * _stride_flux_3] = -0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 24])) - 0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 32]));
+                            _data_flux[_stride_flux_0 * x + _stride_flux_1 * y +
+                                       _stride_flux_2 * z +
+                                       7 * _stride_flux_3] =
+                                -0.1111111111111111 *
+                                    *((double *)(&_data_indexVector[40 * ctr_0 +
+                                                                    24])) -
+                                0.1111111111111111 *
+                                    *((double *)(&_data_indexVector[40 * ctr_0 +
+                                                                    32]));
                           } else {
                             if (((dir) == (15))) {
-                              _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_1 + _stride_flux_2 * z - _stride_flux_2 + 8 * _stride_flux_3] = -0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 24])) + 0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 32]));
+                              _data_flux[_stride_flux_0 * x +
+                                         _stride_flux_1 * y + _stride_flux_1 +
+                                         _stride_flux_2 * z - _stride_flux_2 +
+                                         8 * _stride_flux_3] =
+                                  -0.1111111111111111 *
+                                      *((double
+                                             *)(&_data_indexVector[40 * ctr_0 +
+                                                                   24])) +
+                                  0.1111111111111111 *
+                                      *((double
+                                             *)(&_data_indexVector[40 * ctr_0 +
+                                                                   32]));
                             } else {
                               if (((dir) == (14))) {
-                                _data_flux[_stride_flux_0 * x + _stride_flux_0 + _stride_flux_1 * y + _stride_flux_2 * z + _stride_flux_2 + 5 * _stride_flux_3] = -0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 16])) - 0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 32]));
+                                _data_flux[_stride_flux_0 * x + _stride_flux_0 +
+                                           _stride_flux_1 * y +
+                                           _stride_flux_2 * z + _stride_flux_2 +
+                                           5 * _stride_flux_3] =
+                                    -0.1111111111111111 *
+                                        *((double *)(&_data_indexVector
+                                                         [40 * ctr_0 + 16])) -
+                                    0.1111111111111111 *
+                                        *((double *)(&_data_indexVector
+                                                         [40 * ctr_0 + 32]));
                               } else {
                                 if (((dir) == (13))) {
-                                  _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_2 * z + 6 * _stride_flux_3] = -0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 16])) + 0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 32]));
+                                  _data_flux[_stride_flux_0 * x +
+                                             _stride_flux_1 * y +
+                                             _stride_flux_2 * z +
+                                             6 * _stride_flux_3] =
+                                      -0.1111111111111111 *
+                                          *((double *)(&_data_indexVector
+                                                           [40 * ctr_0 + 16])) +
+                                      0.1111111111111111 *
+                                          *((double *)(&_data_indexVector
+                                                           [40 * ctr_0 + 32]));
                                 } else {
                                   if (((dir) == (12))) {
-                                    _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_2 * z + 8 * _stride_flux_3] = -0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 24])) + 0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 32]));
+                                    _data_flux[_stride_flux_0 * x +
+                                               _stride_flux_1 * y +
+                                               _stride_flux_2 * z +
+                                               8 * _stride_flux_3] =
+                                        -0.1111111111111111 *
+                                            *((double
+                                                   *)(&_data_indexVector
+                                                          [40 * ctr_0 + 24])) +
+                                        0.1111111111111111 *
+                                            *((double
+                                                   *)(&_data_indexVector
+                                                          [40 * ctr_0 + 32]));
                                   } else {
                                     if (((dir) == (11))) {
-                                      _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_1 + _stride_flux_2 * z + _stride_flux_2 + 7 * _stride_flux_3] = -0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 24])) - 0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 32]));
+                                      _data_flux[_stride_flux_0 * x +
+                                                 _stride_flux_1 * y +
+                                                 _stride_flux_1 +
+                                                 _stride_flux_2 * z +
+                                                 _stride_flux_2 +
+                                                 7 * _stride_flux_3] =
+                                          -0.1111111111111111 *
+                                              *((double *)(&_data_indexVector
+                                                               [40 * ctr_0 +
+                                                                24])) -
+                                          0.1111111111111111 *
+                                              *((double
+                                                     *)(&_data_indexVector
+                                                            [40 * ctr_0 + 32]));
                                     } else {
                                       if (((dir) == (10))) {
-                                        _data_flux[_stride_flux_0 * x + _stride_flux_0 + _stride_flux_1 * y - _stride_flux_1 + _stride_flux_2 * z + 4 * _stride_flux_3] = -0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 16])) + 0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 24]));
+                                        _data_flux[_stride_flux_0 * x +
+                                                   _stride_flux_0 +
+                                                   _stride_flux_1 * y -
+                                                   _stride_flux_1 +
+                                                   _stride_flux_2 * z +
+                                                   4 * _stride_flux_3] =
+                                            -0.1111111111111111 *
+                                                *((double *)(&_data_indexVector
+                                                                 [40 * ctr_0 +
+                                                                  16])) +
+                                            0.1111111111111111 *
+                                                *((double *)(&_data_indexVector
+                                                                 [40 * ctr_0 +
+                                                                  24]));
                                       } else {
                                         if (((dir) == (9))) {
-                                          _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_2 * z + 3 * _stride_flux_3] = -0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 16])) - 0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 24]));
+                                          _data_flux[_stride_flux_0 * x +
+                                                     _stride_flux_1 * y +
+                                                     _stride_flux_2 * z +
+                                                     3 * _stride_flux_3] =
+                                              -0.1111111111111111 *
+                                                  *((double
+                                                         *)(&_data_indexVector
+                                                                [40 * ctr_0 +
+                                                                 16])) -
+                                              0.1111111111111111 *
+                                                  *((double
+                                                         *)(&_data_indexVector
+                                                                [40 * ctr_0 +
+                                                                 24]));
                                         } else {
                                           if (((dir) == (8))) {
-                                            _data_flux[_stride_flux_0 * x + _stride_flux_0 + _stride_flux_1 * y + _stride_flux_1 + _stride_flux_2 * z + 3 * _stride_flux_3] = -0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 16])) - 0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 24]));
+                                            _data_flux[_stride_flux_0 * x +
+                                                       _stride_flux_0 +
+                                                       _stride_flux_1 * y +
+                                                       _stride_flux_1 +
+                                                       _stride_flux_2 * z +
+                                                       3 * _stride_flux_3] =
+                                                -0.1111111111111111 *
+                                                    *((double
+                                                           *)(&_data_indexVector
+                                                                  [40 * ctr_0 +
+                                                                   16])) -
+                                                0.1111111111111111 *
+                                                    *((double
+                                                           *)(&_data_indexVector
+                                                                  [40 * ctr_0 +
+                                                                   24]));
                                           } else {
                                             if (((dir) == (7))) {
-                                              _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_2 * z + 4 * _stride_flux_3] = -0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 16])) + 0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 24]));
+                                              _data_flux[_stride_flux_0 * x +
+                                                         _stride_flux_1 * y +
+                                                         _stride_flux_2 * z +
+                                                         4 * _stride_flux_3] =
+                                                  -0.1111111111111111 *
+                                                      *((double
+                                                             *)(&_data_indexVector
+                                                                    [40 *
+                                                                         ctr_0 +
+                                                                     16])) +
+                                                  0.1111111111111111 *
+                                                      *((double
+                                                             *)(&_data_indexVector
+                                                                    [40 *
+                                                                         ctr_0 +
+                                                                     24]));
                                             } else {
                                               if (((dir) == (6))) {
-                                                _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_2 * z + 2 * _stride_flux_3] = -0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 32]));
+                                                _data_flux[_stride_flux_0 * x +
+                                                           _stride_flux_1 * y +
+                                                           _stride_flux_2 * z +
+                                                           2 * _stride_flux_3] =
+                                                    -0.1111111111111111 *
+                                                    *((double
+                                                           *)(&_data_indexVector
+                                                                  [40 * ctr_0 +
+                                                                   32]));
                                               } else {
                                                 if (((dir) == (5))) {
-                                                  _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_2 * z + _stride_flux_2 + 2 * _stride_flux_3] = -0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 32]));
+                                                  _data_flux[_stride_flux_0 *
+                                                                 x +
+                                                             _stride_flux_1 *
+                                                                 y +
+                                                             _stride_flux_2 *
+                                                                 z +
+                                                             _stride_flux_2 +
+                                                             2 * _stride_flux_3] =
+                                                      -0.1111111111111111 *
+                                                      *((double
+                                                             *)(&_data_indexVector
+                                                                    [40 *
+                                                                         ctr_0 +
+                                                                     32]));
                                                 } else {
                                                   if (((dir) == (4))) {
-                                                    _data_flux[_stride_flux_0 * x + _stride_flux_0 + _stride_flux_1 * y + _stride_flux_2 * z] = -0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 16]));
+                                                    _data_flux[_stride_flux_0 *
+                                                                   x +
+                                                               _stride_flux_0 +
+                                                               _stride_flux_1 *
+                                                                   y +
+                                                               _stride_flux_2 *
+                                                                   z] =
+                                                        -0.1111111111111111 *
+                                                        *((double
+                                                               *)(&_data_indexVector
+                                                                      [40 *
+                                                                           ctr_0 +
+                                                                       16]));
                                                   } else {
                                                     if (((dir) == (3))) {
-                                                      _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_2 * z] = -0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 16]));
+                                                      _data_flux[_stride_flux_0 *
+                                                                     x +
+                                                                 _stride_flux_1 *
+                                                                     y +
+                                                                 _stride_flux_2 *
+                                                                     z] =
+                                                          -0.1111111111111111 *
+                                                          *((double
+                                                                 *)(&_data_indexVector
+                                                                        [40 *
+                                                                             ctr_0 +
+                                                                         16]));
                                                     } else {
                                                       if (((dir) == (2))) {
-                                                        _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_2 * z + _stride_flux_3] = -0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 24]));
+                                                        _data_flux[_stride_flux_0 *
+                                                                       x +
+                                                                   _stride_flux_1 *
+                                                                       y +
+                                                                   _stride_flux_2 *
+                                                                       z +
+                                                                   _stride_flux_3] =
+                                                            -0.1111111111111111 *
+                                                            *((double
+                                                                   *)(&_data_indexVector
+                                                                          [40 *
+                                                                               ctr_0 +
+                                                                           24]));
                                                       } else {
                                                         if (((dir) == (1))) {
-                                                          _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_1 + _stride_flux_2 * z + _stride_flux_3] = -0.1111111111111111 * *((double *)(&_data_indexVector[40 * ctr_0 + 24]));
+                                                          _data_flux[_stride_flux_0 *
+                                                                         x +
+                                                                     _stride_flux_1 *
+                                                                         y +
+                                                                     _stride_flux_1 +
+                                                                     _stride_flux_2 *
+                                                                         z +
+                                                                     _stride_flux_3] =
+                                                              -0.1111111111111111 *
+                                                              *((double
+                                                                     *)(&_data_indexVector
+                                                                            [40 *
+                                                                                 ctr_0 +
+                                                                             24]));
                                                         }
                                                       }
                                                     }
@@ -174,11 +444,12 @@ static FUNC_PREFIX void fixedflux_double_precision_boundary_FixedFlux_double_pre
 #pragma GCC diagnostic pop
 #endif
 
-#ifdef __CUDACC__
+#if defined(__CUDACC__) && !defined(__clang__)
 #pragma pop
 #endif
 
-void FixedFlux_double_precision::run_impl(IBlock *block, IndexVectors::Type type) {
+void FixedFlux_double_precision::run_impl(IBlock *block,
+                                          IndexVectors::Type type) {
   auto *indexVectors = block->getData<IndexVectors>(indexVectorID);
   int32_t indexVectorSize = int32_c(indexVectors->indexVector(type).size());
   if (indexVectorSize == 0)
@@ -196,7 +467,10 @@ void FixedFlux_double_precision::run_impl(IBlock *block, IndexVectors::Type type
   const int64_t _stride_flux_1 = int64_t(flux->yStride());
   const int64_t _stride_flux_2 = int64_t(flux->zStride());
   const int64_t _stride_flux_3 = int64_t(1 * int64_t(flux->fStride()));
-  internal_bdec58bfeb737088cd218660bd069d85::fixedflux_double_precision_boundary_FixedFlux_double_precision(_data_flux, _data_indexVector, _stride_flux_0, _stride_flux_1, _stride_flux_2, _stride_flux_3, indexVectorSize);
+  internal_bdec58bfeb737088cd218660bd069d85::
+      fixedflux_double_precision_boundary_FixedFlux_double_precision(
+          _data_flux, _data_indexVector, _stride_flux_0, _stride_flux_1,
+          _stride_flux_2, _stride_flux_3, indexVectorSize);
 }
 
 void FixedFlux_double_precision::run(IBlock *block) {

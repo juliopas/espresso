@@ -25,9 +25,7 @@
 #include "CellStructure.hpp"
 #include "kokkos_helpers.hpp"
 
-#ifdef ESPRESSO_SHARED_MEMORY_PARALLELISM
 #include <Kokkos_Core.hpp>
-#endif
 
 #include <cstddef>
 #include <numeric>
@@ -44,7 +42,6 @@
 template <typename Kernel>
 inline void enumerate_local_particles(CellStructure const &cs,
                                       Kernel &&kernel) {
-#ifdef ESPRESSO_SHARED_MEMORY_PARALLELISM
   if (cs.use_parallel_for_each_local_particle()) {
     auto const local_cells = cs.decomposition().local_cells();
 
@@ -68,7 +65,6 @@ inline void enumerate_local_particles(CellStructure const &cs,
         });
     return;
   }
-#endif // ESPRESSO_SHARED_MEMORY_PARALLELISM
   // Sequential fallback
   std::size_t index = 0;
   for (auto &p : cs.local_particles()) {

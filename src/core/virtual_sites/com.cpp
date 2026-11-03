@@ -42,6 +42,7 @@
 #include "Particle.hpp"
 #include "PropagationMode.hpp"
 #include "cell_system/CellStructure.hpp"
+#include "cell_system/for_each_particle.hpp"
 #include "cells.hpp"
 #include "communication.hpp"
 
@@ -168,6 +169,7 @@ void vs_com_update_particles(CellStructure &cell_structure,
 
   // Communicate the list of molids to all processes
   std::vector<std::unordered_set<MoleculeId>> global_mol_ids{};
+  // NOLINTNEXTLINE(clang-analyzer-security.ArrayBound)
   boost::mpi::all_gather(comm_cart, local_mol_ids, global_mol_ids);
   std::unordered_set<MoleculeId> unique_mol_ids{};
   for (auto const &mol_id_set : global_mol_ids) {

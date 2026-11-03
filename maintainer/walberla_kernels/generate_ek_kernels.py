@@ -295,8 +295,7 @@ with code_generation_context.CodeGeneration() as ctx:
         ctx.patch_file(class_name, get_ext_source(
             processor_suffix), patch_openmp_kernels)
     if "friction_coupling" in args.kernels:
-        class_name = f"FrictionCouplingKernel_{
-            precision_suffix}{processor_suffix}"
+        class_name = f"FrictionCouplingKernel_{precision_suffix}{processor_suffix}"  # nopep8
         pystencils_walberla.generate_sweep(
             ctx,
             class_name,

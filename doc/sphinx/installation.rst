@@ -87,7 +87,7 @@ are required to be able to compile and use |es|:
     FFTW
         For some algorithms like |p3m|, |es| needs the FFTW library
         version 3 or later [5]_ for Fourier transforms, including header files.
-        |es| leverages heFFTe :cite:`ayala20a`.
+        |es| leverages heFFTe :cite:`ayala20a` and kokkos-fft :cite:`asahi25a`.
 
     CUDA
         For some algorithms like |p3m| and lattice-Boltzmann,
@@ -214,6 +214,8 @@ will generate device code for both sm_75 and sm_86 architectures.
 The CMake option ``ESPRESSO_CMAKE_CUDA_ARCHITECTURES`` achieves the same effect.
 Both take a semicolon-separated list of integers. There are online resources
 to help determine which architecture match specific hardware [12]_.
+Alternatively, run ``nvidia-smi --query-gpu=name,compute_cap`` to display the exact
+compute capability of your GPU, then multiply that value by 10 to get the architecture.
 The CMake option ``CMAKE_CUDA_ARCHITECTURES`` cannot be used to set CUDA
 architectures, because it has a default value that is too old for the
 minimally required CUDA version.
@@ -246,8 +248,8 @@ If the NVIDIA HPC SDK is installed, the NVHPC toolchain can be used with GCC 12.
          CC=clang-19 CXX=clang++-19 CUDACXX=clang++-19 cmake .. \
            -D ESPRESSO_BUILD_WITH_CUDA=ON \
            -D CUDAToolkit_ROOT=/usr/local/cuda-12.0 \
-           -D CMAKE_CXX_FLAGS="-I/usr/include/x86_64-linux-gnu/c++/12 -I/usr/include/c++/12" \
-           -D CMAKE_CUDA_FLAGS="-I/usr/include/x86_64-linux-gnu/c++/12 -I/usr/include/c++/12 --cuda-path=/usr/local/cuda-12.0"
+           -D CMAKE_CXX_FLAGS="--gcc-install-dir=/usr/lib/gcc/x86_64-linux-gnu/12" \
+           -D CMAKE_CUDA_FLAGS="--gcc-install-dir=/usr/lib/gcc/x86_64-linux-gnu/12 --cuda-path=/usr/local/cuda-12.0"
 
       with compiler dependencies:
 
@@ -261,8 +263,9 @@ If the NVIDIA HPC SDK is installed, the NVHPC toolchain can be used with GCC 12.
 
       .. code-block:: bash
 
-         CC=nvc CXX=nvc++ CUDACXX=nvcc cmake .. \
+         CC=nvc CXX=nvc++ CUDACXX=nvcc CUDAHOSTCXX=nvc++ cmake .. \
             -D ESPRESSO_BUILD_WITH_CUDA=ON \
+            -D CMAKE_CUDA_FLAGS="$(mpicc --showme:compile)" \
             -D CMAKE_CXX_FLAGS="--gcc-toolchain=gcc-12"
 
       with compiler dependencies:
@@ -320,8 +323,8 @@ If the NVIDIA HPC SDK is installed, the NVHPC toolchain can be used with GCC 13.
          CC=clang-20 CXX=clang++-20 CUDACXX=clang++-20 cmake .. \
            -D ESPRESSO_BUILD_WITH_CUDA=ON \
            -D CUDAToolkit_ROOT=/usr/lib/cuda \
-           -D CMAKE_CXX_FLAGS="-I/usr/include/x86_64-linux-gnu/c++/15 -I/usr/include/c++/15" \
-           -D CMAKE_CUDA_FLAGS="-I/usr/include/x86_64-linux-gnu/c++/15 -I/usr/include/c++/15 --cuda-path=/usr/lib/cuda"
+           -D CMAKE_CXX_FLAGS="--gcc-install-dir=/usr/lib/gcc/x86_64-linux-gnu/15" \
+           -D CMAKE_CUDA_FLAGS="--gcc-install-dir=/usr/lib/gcc/x86_64-linux-gnu/15 --cuda-path=/usr/lib/cuda"
 
       with compiler dependencies:
 
@@ -335,8 +338,9 @@ If the NVIDIA HPC SDK is installed, the NVHPC toolchain can be used with GCC 13.
 
       .. code-block:: bash
 
-         CC=nvc CXX=nvc++ CUDACXX=nvcc cmake .. \
+         CC=nvc CXX=nvc++ CUDACXX=nvcc CUDAHOSTCXX=nvc++ cmake .. \
             -D ESPRESSO_BUILD_WITH_CUDA=ON \
+            -D CMAKE_CUDA_FLAGS="$(mpicc --showme:compile)" \
             -D CMAKE_CXX_FLAGS="--gcc-toolchain=gcc-13"
 
       with compiler dependencies:
@@ -803,9 +807,6 @@ using a CMake flag (see :ref:`Options and Variables`).
 - ``STOKESIAN_DYNAMICS``: enable the Stokesian Dynamics propagator
   (see :ref:`Stokesian Dynamics`). Requires BLAS and LAPACK.
 
-- ``SHARED_MEMORY_PARALLELISM``: enable shared-memory parallelism
-  (OpenMP, Kokkos, Cabana)
-
 - ``CALIPER``, ``VALGRIND``, ``FPE``: enable various instrumentation tools
   (see :ref:`Instrumentation`)
 
@@ -969,7 +970,6 @@ The following options control features from external libraries:
 * ``ESPRESSO_BUILD_WITH_SCAFACOS``: Build with ScaFaCoS support.
 * ``ESPRESSO_BUILD_WITH_GSL``: Build with GSL support.
 * ``ESPRESSO_BUILD_WITH_STOKESIAN_DYNAMICS`` Build with Stokesian Dynamics support.
-* ``ESPRESSO_BUILD_WITH_SHARED_MEMORY_PARALLELISM``: Build with shared-memory parallelism support (OpenMP, Cabana, Kokkos, etc.)
 * ``ESPRESSO_BUILD_WITH_WALBERLA``: Build with waLBerla support.
 * ``ESPRESSO_BUILD_WITH_WALBERLA_AVX``: Build waLBerla with AVX kernels instead of regular kernels.
 * ``ESPRESSO_BUILD_WITH_PYTHON``: Build with the Python interface.

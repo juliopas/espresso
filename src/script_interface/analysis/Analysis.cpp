@@ -21,6 +21,7 @@
 #include "ObservableStat.hpp"
 
 #include "core/BoxGeometry.hpp"
+#include "core/Observable_stat.hpp"
 #include "core/analysis/statistics.hpp"
 #include "core/analysis/statistics_chain.hpp"
 #include "core/cell_system/CellStructure.hpp"
@@ -134,6 +135,10 @@ Variant Analysis::do_call_method(std::string const &name,
     auto const partners = get_value<std::vector<int>>(parameters, "partners");
     auto const local = system.particle_bond_energy(pid, bond_id, partners);
     return Utils::Mpi::reduce_optional(context()->get_comm(), local);
+  }
+  if (name == "potential_energy") {
+    auto const &obs = get_system().calculate_energy();
+    return obs.accumulate(-(obs.kinetic_lin[0] + obs.kinetic_rot[0]));
   }
   if (name == "particle_neighbor_pids") {
     auto &system = get_system();

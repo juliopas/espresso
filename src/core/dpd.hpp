@@ -74,7 +74,6 @@ Utils::Vector3d dpd_pair_force(
     BoxGeometry const &box_geo, IA_parameters const &ia_params,
     Utils::Vector3d const &d, double dist, double dist2);
 
-Utils::Vector9d dpd_pressure_local(System::System &system);
 Utils::Vector9d dpd_pressure(System::System &system,
                              boost::mpi::communicator const &comm);
 
