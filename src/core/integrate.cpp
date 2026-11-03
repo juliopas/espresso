@@ -725,9 +725,6 @@ int System::System::integrate(int n_steps, int reuse_forces) {
     if (cell_structure->get_resort_particles() >= Cells::RESORT_LOCAL)
       n_verlet_updates++;
 
-    /* Update the magnetic moments before the ghost exchange, so that ghost
-     * copies carry the moments the force calculation is about to use. This
-     * mirrors the ordering of the initial force calculation above. */
 #if defined(ESPRESSO_LANGEVIN_MAGNETIZATION) ||                                \
     defined(ESPRESSO_FROELICH_KENNELLY) ||                                     \
     defined(ESPRESSO_THERMAL_STONER_WOHLFARTH)
