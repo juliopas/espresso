@@ -17,9 +17,7 @@
 //! \\author pystencils
 //======================================================================================================================
 
-// kernel generated with pystencils v1.4+1.ge851f4e, lbmpy v1.4+1.ge9efe34,
-// sympy v1.12.1, lbmpy_walberla/pystencils_walberla from waLBerla commit
-// 3247aa7395049ca5bfb69d34d55e45db19fa439c
+// kernel generated with pystencils v1.4+1.ge851f4e, lbmpy v1.4+1.ge9efe34, sympy v1.12.1, lbmpy_walberla/pystencils_walberla from waLBerla commit 3247aa7395049ca5bfb69d34d55e45db19fa439c
 
 #include <cmath>
 
@@ -29,8 +27,7 @@
 
 #define FUNC_PREFIX
 
-#if (defined WALBERLA_CXX_COMPILER_IS_GNU) ||                                  \
-    (defined WALBERLA_CXX_COMPILER_IS_CLANG)
+#if (defined WALBERLA_CXX_COMPILER_IS_GNU) || (defined WALBERLA_CXX_COMPILER_IS_CLANG)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wfloat-equal"
 #pragma GCC diagnostic ignored "-Wshadow"
@@ -49,564 +46,51 @@ namespace walberla {
 namespace pystencils {
 
 namespace internal_47df4b171f276b8c3a55fc08d45e245e {
-static FUNC_PREFIX void
-advectivefluxkernel_single_precision_advectivefluxkernel_single_precision(
-    float *RESTRICT const _data_j, float *RESTRICT const _data_rho,
-    float *RESTRICT const _data_u, int64_t const _size_j_0,
-    int64_t const _size_j_1, int64_t const _size_j_2, int64_t const _stride_j_0,
-    int64_t const _stride_j_1, int64_t const _stride_j_2,
-    int64_t const _stride_j_3, int64_t const _stride_rho_0,
-    int64_t const _stride_rho_1, int64_t const _stride_rho_2,
-    int64_t const _stride_u_0, int64_t const _stride_u_1,
-    int64_t const _stride_u_2, int64_t const _stride_u_3) {
+static FUNC_PREFIX void advectivefluxkernel_single_precision_advectivefluxkernel_single_precision(float *RESTRICT const _data_j, float *RESTRICT const _data_rho, float *RESTRICT const _data_u, int64_t const _size_j_0, int64_t const _size_j_1, int64_t const _size_j_2, int64_t const _stride_j_0, int64_t const _stride_j_1, int64_t const _stride_j_2, int64_t const _stride_j_3, int64_t const _stride_rho_0, int64_t const _stride_rho_1, int64_t const _stride_rho_2, int64_t const _stride_u_0, int64_t const _stride_u_1, int64_t const _stride_u_2, int64_t const _stride_u_3) {
 #pragma omp parallel
   {
 #pragma omp for schedule(static)
     for (int64_t ctr_2 = 0; ctr_2 < _size_j_2; ctr_2 += 1) {
       for (int64_t ctr_1 = 0; ctr_1 < _size_j_1; ctr_1 += 1) {
         for (int64_t ctr_0 = 1; ctr_0 < _size_j_0; ctr_0 += 1) {
-          if (ctr_1 > 0 && ctr_2 > 0 && ctr_1 < _size_j_1 - 1 &&
-              ctr_2 < _size_j_2 - 1) {
-            _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 +
-                    _stride_j_2 * ctr_2] =
-                -(1.0f -
-                  fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                               _stride_u_2 * ctr_2 + 2 * _stride_u_3])) *
-                    (1.0f -
-                     fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                                  _stride_u_2 * ctr_2 + _stride_u_3])) *
-                    ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                              _stride_u_2 * ctr_2] < 0.0f)
-                         ? (1.0f)
-                         : (0.0f)) *
-                    _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 +
-                              _stride_rho_2 * ctr_2] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                            _stride_u_2 * ctr_2] -
-                (1.0f - fabs(_data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                                     _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 +
-                                     2 * _stride_u_3])) *
-                    (1.0f - fabs(_data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                                         _stride_u_1 * ctr_1 +
-                                         _stride_u_2 * ctr_2 + _stride_u_3])) *
-                    ((_data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                              _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2] > 0.0f)
-                         ? (1.0f)
-                         : (0.0f)) *
-                    _data_rho[_stride_rho_0 * ctr_0 - _stride_rho_0 +
-                              _stride_rho_1 * ctr_1 + _stride_rho_2 * ctr_2] *
-                    _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                            _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2] +
-                _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 +
-                        _stride_j_2 * ctr_2];
+          if (ctr_1 > 0 && ctr_2 > 0 && ctr_1 < _size_j_1 - 1 && ctr_2 < _size_j_2 - 1) {
+            _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 + _stride_j_2 * ctr_2] = -(1.0f - fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + 2 * _stride_u_3])) * (1.0f - fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + _stride_u_3])) * ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2] < 0.0f) ? (1.0f) : (0.0f)) * _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 + _stride_rho_2 * ctr_2] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2] - (1.0f - fabs(_data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + 2 * _stride_u_3])) * (1.0f - fabs(_data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + _stride_u_3])) * ((_data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2] > 0.0f) ? (1.0f) : (0.0f)) * _data_rho[_stride_rho_0 * ctr_0 - _stride_rho_0 + _stride_rho_1 * ctr_1 + _stride_rho_2 * ctr_2] * _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2] + _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 + _stride_j_2 * ctr_2];
           }
-          if (ctr_1 > 0 && ctr_2 > 0 && ctr_0 < _size_j_0 - 1 &&
-              ctr_2 < _size_j_2 - 1) {
-            _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 +
-                    _stride_j_2 * ctr_2 + _stride_j_3] =
-                -(1.0f -
-                  fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                               _stride_u_2 * ctr_2 + 2 * _stride_u_3])) *
-                    (1.0f -
-                     fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                                  _stride_u_2 * ctr_2])) *
-                    ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                              _stride_u_2 * ctr_2 + _stride_u_3] < 0.0f)
-                         ? (1.0f)
-                         : (0.0f)) *
-                    _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 +
-                              _stride_rho_2 * ctr_2] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                            _stride_u_2 * ctr_2 + _stride_u_3] -
-                (1.0f - fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 -
-                                     _stride_u_1 + _stride_u_2 * ctr_2 +
-                                     2 * _stride_u_3])) *
-                    (1.0f -
-                     fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 -
-                                  _stride_u_1 + _stride_u_2 * ctr_2])) *
-                    ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 -
-                              _stride_u_1 + _stride_u_2 * ctr_2 + _stride_u_3] >
-                      0.0f)
-                         ? (1.0f)
-                         : (0.0f)) *
-                    _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 -
-                              _stride_rho_1 + _stride_rho_2 * ctr_2] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 -
-                            _stride_u_1 + _stride_u_2 * ctr_2 + _stride_u_3] +
-                _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 +
-                        _stride_j_2 * ctr_2 + _stride_j_3];
+          if (ctr_1 > 0 && ctr_2 > 0 && ctr_0 < _size_j_0 - 1 && ctr_2 < _size_j_2 - 1) {
+            _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 + _stride_j_2 * ctr_2 + _stride_j_3] = -(1.0f - fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + 2 * _stride_u_3])) * (1.0f - fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2])) * ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + _stride_u_3] < 0.0f) ? (1.0f) : (0.0f)) * _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 + _stride_rho_2 * ctr_2] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + _stride_u_3] - (1.0f - fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 - _stride_u_1 + _stride_u_2 * ctr_2 + 2 * _stride_u_3])) * (1.0f - fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 - _stride_u_1 + _stride_u_2 * ctr_2])) * ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 - _stride_u_1 + _stride_u_2 * ctr_2 + _stride_u_3] > 0.0f) ? (1.0f) : (0.0f)) * _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 - _stride_rho_1 + _stride_rho_2 * ctr_2] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 - _stride_u_1 + _stride_u_2 * ctr_2 + _stride_u_3] + _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 + _stride_j_2 * ctr_2 + _stride_j_3];
           }
-          if (ctr_1 > 0 && ctr_2 > 0 && ctr_0 < _size_j_0 - 1 &&
-              ctr_1 < _size_j_1 - 1) {
-            _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 +
-                    _stride_j_2 * ctr_2 + 2 * _stride_j_3] =
-                -(1.0f -
-                  fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                               _stride_u_2 * ctr_2 + _stride_u_3])) *
-                    (1.0f -
-                     fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                                  _stride_u_2 * ctr_2])) *
-                    ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                              _stride_u_2 * ctr_2 + 2 * _stride_u_3] < 0.0f)
-                         ? (1.0f)
-                         : (0.0f)) *
-                    _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 +
-                              _stride_rho_2 * ctr_2] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                            _stride_u_2 * ctr_2 + 2 * _stride_u_3] -
-                (1.0f - fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                                     _stride_u_2 * ctr_2 - _stride_u_2 +
-                                     _stride_u_3])) *
-                    (1.0f -
-                     fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                                  _stride_u_2 * ctr_2 - _stride_u_2])) *
-                    ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                              _stride_u_2 * ctr_2 - _stride_u_2 +
-                              2 * _stride_u_3] > 0.0f)
-                         ? (1.0f)
-                         : (0.0f)) *
-                    _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 +
-                              _stride_rho_2 * ctr_2 - _stride_rho_2] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                            _stride_u_2 * ctr_2 - _stride_u_2 +
-                            2 * _stride_u_3] +
-                _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 +
-                        _stride_j_2 * ctr_2 + 2 * _stride_j_3];
+          if (ctr_1 > 0 && ctr_2 > 0 && ctr_0 < _size_j_0 - 1 && ctr_1 < _size_j_1 - 1) {
+            _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 + _stride_j_2 * ctr_2 + 2 * _stride_j_3] = -(1.0f - fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + _stride_u_3])) * (1.0f - fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2])) * ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + 2 * _stride_u_3] < 0.0f) ? (1.0f) : (0.0f)) * _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 + _stride_rho_2 * ctr_2] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + 2 * _stride_u_3] - (1.0f - fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 - _stride_u_2 + _stride_u_3])) * (1.0f - fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 - _stride_u_2])) * ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 - _stride_u_2 + 2 * _stride_u_3] > 0.0f) ? (1.0f) : (0.0f)) * _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 + _stride_rho_2 * ctr_2 - _stride_rho_2] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 - _stride_u_2 + 2 * _stride_u_3] + _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 + _stride_j_2 * ctr_2 + 2 * _stride_j_3];
           }
           if (ctr_1 > 0 && ctr_2 > 0 && ctr_2 < _size_j_2 - 1) {
-            _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 +
-                    _stride_j_2 * ctr_2 + 3 * _stride_j_3] =
-                (1.0f - fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                                     _stride_u_2 * ctr_2 + 2 * _stride_u_3])) *
-                    ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                              _stride_u_2 * ctr_2 + _stride_u_3] < 0.0f &&
-                      _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                              _stride_u_2 * ctr_2] < 0.0f)
-                         ? (1.0f)
-                         : (0.0f)) *
-                    _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 +
-                              _stride_rho_2 * ctr_2] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                            _stride_u_2 * ctr_2 + _stride_u_3] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                            _stride_u_2 * ctr_2] -
-                (1.0f - fabs(_data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                                     _stride_u_1 * ctr_1 - _stride_u_1 +
-                                     _stride_u_2 * ctr_2 + 2 * _stride_u_3])) *
-                    ((_data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                              _stride_u_1 * ctr_1 - _stride_u_1 +
-                              _stride_u_2 * ctr_2 + _stride_u_3] > 0.0f &&
-                      _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                              _stride_u_1 * ctr_1 - _stride_u_1 +
-                              _stride_u_2 * ctr_2] > 0.0f)
-                         ? (1.0f)
-                         : (0.0f)) *
-                    _data_rho[_stride_rho_0 * ctr_0 - _stride_rho_0 +
-                              _stride_rho_1 * ctr_1 - _stride_rho_1 +
-                              _stride_rho_2 * ctr_2] *
-                    _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                            _stride_u_1 * ctr_1 - _stride_u_1 +
-                            _stride_u_2 * ctr_2 + _stride_u_3] *
-                    _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                            _stride_u_1 * ctr_1 - _stride_u_1 +
-                            _stride_u_2 * ctr_2] +
-                _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 +
-                        _stride_j_2 * ctr_2 + 3 * _stride_j_3];
+            _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 + _stride_j_2 * ctr_2 + 3 * _stride_j_3] = (1.0f - fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + 2 * _stride_u_3])) * ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + _stride_u_3] < 0.0f && _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2] < 0.0f) ? (1.0f) : (0.0f)) * _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 + _stride_rho_2 * ctr_2] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + _stride_u_3] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2] - (1.0f - fabs(_data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 - _stride_u_1 + _stride_u_2 * ctr_2 + 2 * _stride_u_3])) * ((_data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 - _stride_u_1 + _stride_u_2 * ctr_2 + _stride_u_3] > 0.0f && _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 - _stride_u_1 + _stride_u_2 * ctr_2] > 0.0f) ? (1.0f) : (0.0f)) * _data_rho[_stride_rho_0 * ctr_0 - _stride_rho_0 + _stride_rho_1 * ctr_1 - _stride_rho_1 + _stride_rho_2 * ctr_2] * _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 - _stride_u_1 + _stride_u_2 * ctr_2 + _stride_u_3] * _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 - _stride_u_1 + _stride_u_2 * ctr_2] + _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 + _stride_j_2 * ctr_2 + 3 * _stride_j_3];
           }
           if (ctr_2 > 0 && ctr_1 < _size_j_1 - 1 && ctr_2 < _size_j_2 - 1) {
-            _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 +
-                    _stride_j_2 * ctr_2 + 4 * _stride_j_3] =
-                -(1.0f -
-                  fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                               _stride_u_2 * ctr_2 + 2 * _stride_u_3])) *
-                    ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                              _stride_u_2 * ctr_2 + _stride_u_3] > 0.0f &&
-                      _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                              _stride_u_2 * ctr_2] < 0.0f)
-                         ? (1.0f)
-                         : (0.0f)) *
-                    _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 +
-                              _stride_rho_2 * ctr_2] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                            _stride_u_2 * ctr_2 + _stride_u_3] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                            _stride_u_2 * ctr_2] +
-                (1.0f - fabs(_data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                                     _stride_u_1 * ctr_1 + _stride_u_1 +
-                                     _stride_u_2 * ctr_2 + 2 * _stride_u_3])) *
-                    ((_data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                              _stride_u_1 * ctr_1 + _stride_u_1 +
-                              _stride_u_2 * ctr_2] > 0.0f &&
-                      _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                              _stride_u_1 * ctr_1 + _stride_u_1 +
-                              _stride_u_2 * ctr_2 + _stride_u_3] < 0.0f)
-                         ? (1.0f)
-                         : (0.0f)) *
-                    _data_rho[_stride_rho_0 * ctr_0 - _stride_rho_0 +
-                              _stride_rho_1 * ctr_1 + _stride_rho_1 +
-                              _stride_rho_2 * ctr_2] *
-                    _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                            _stride_u_1 * ctr_1 + _stride_u_1 +
-                            _stride_u_2 * ctr_2 + _stride_u_3] *
-                    _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                            _stride_u_1 * ctr_1 + _stride_u_1 +
-                            _stride_u_2 * ctr_2] +
-                _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 +
-                        _stride_j_2 * ctr_2 + 4 * _stride_j_3];
+            _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 + _stride_j_2 * ctr_2 + 4 * _stride_j_3] = -(1.0f - fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + 2 * _stride_u_3])) * ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + _stride_u_3] > 0.0f && _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2] < 0.0f) ? (1.0f) : (0.0f)) * _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 + _stride_rho_2 * ctr_2] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + _stride_u_3] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2] + (1.0f - fabs(_data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 + _stride_u_1 + _stride_u_2 * ctr_2 + 2 * _stride_u_3])) * ((_data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 + _stride_u_1 + _stride_u_2 * ctr_2] > 0.0f && _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 + _stride_u_1 + _stride_u_2 * ctr_2 + _stride_u_3] < 0.0f) ? (1.0f) : (0.0f)) * _data_rho[_stride_rho_0 * ctr_0 - _stride_rho_0 + _stride_rho_1 * ctr_1 + _stride_rho_1 + _stride_rho_2 * ctr_2] * _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 + _stride_u_1 + _stride_u_2 * ctr_2 + _stride_u_3] * _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 + _stride_u_1 + _stride_u_2 * ctr_2] + _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 + _stride_j_2 * ctr_2 + 4 * _stride_j_3];
           }
           if (ctr_1 > 0 && ctr_2 > 0 && ctr_1 < _size_j_1 - 1) {
-            _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 +
-                    _stride_j_2 * ctr_2 + 5 * _stride_j_3] =
-                (1.0f - fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                                     _stride_u_2 * ctr_2 + _stride_u_3])) *
-                    ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                              _stride_u_2 * ctr_2 + 2 * _stride_u_3] < 0.0f &&
-                      _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                              _stride_u_2 * ctr_2] < 0.0f)
-                         ? (1.0f)
-                         : (0.0f)) *
-                    _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 +
-                              _stride_rho_2 * ctr_2] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                            _stride_u_2 * ctr_2 + 2 * _stride_u_3] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                            _stride_u_2 * ctr_2] -
-                (1.0f - fabs(_data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                                     _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 -
-                                     _stride_u_2 + _stride_u_3])) *
-                    ((_data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                              _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 -
-                              _stride_u_2 + 2 * _stride_u_3] > 0.0f &&
-                      _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                              _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 -
-                              _stride_u_2] > 0.0f)
-                         ? (1.0f)
-                         : (0.0f)) *
-                    _data_rho[_stride_rho_0 * ctr_0 - _stride_rho_0 +
-                              _stride_rho_1 * ctr_1 + _stride_rho_2 * ctr_2 -
-                              _stride_rho_2] *
-                    _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                            _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 -
-                            _stride_u_2 + 2 * _stride_u_3] *
-                    _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                            _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 -
-                            _stride_u_2] +
-                _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 +
-                        _stride_j_2 * ctr_2 + 5 * _stride_j_3];
+            _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 + _stride_j_2 * ctr_2 + 5 * _stride_j_3] = (1.0f - fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + _stride_u_3])) * ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + 2 * _stride_u_3] < 0.0f && _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2] < 0.0f) ? (1.0f) : (0.0f)) * _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 + _stride_rho_2 * ctr_2] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + 2 * _stride_u_3] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2] - (1.0f - fabs(_data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 - _stride_u_2 + _stride_u_3])) * ((_data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 - _stride_u_2 + 2 * _stride_u_3] > 0.0f && _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 - _stride_u_2] > 0.0f) ? (1.0f) : (0.0f)) * _data_rho[_stride_rho_0 * ctr_0 - _stride_rho_0 + _stride_rho_1 * ctr_1 + _stride_rho_2 * ctr_2 - _stride_rho_2] * _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 - _stride_u_2 + 2 * _stride_u_3] * _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 - _stride_u_2] + _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 + _stride_j_2 * ctr_2 + 5 * _stride_j_3];
           }
           if (ctr_1 > 0 && ctr_1 < _size_j_1 - 1 && ctr_2 < _size_j_2 - 1) {
-            _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 +
-                    _stride_j_2 * ctr_2 + 6 * _stride_j_3] =
-                -(1.0f -
-                  fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                               _stride_u_2 * ctr_2 + _stride_u_3])) *
-                    ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                              _stride_u_2 * ctr_2 + 2 * _stride_u_3] > 0.0f &&
-                      _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                              _stride_u_2 * ctr_2] < 0.0f)
-                         ? (1.0f)
-                         : (0.0f)) *
-                    _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 +
-                              _stride_rho_2 * ctr_2] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                            _stride_u_2 * ctr_2 + 2 * _stride_u_3] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                            _stride_u_2 * ctr_2] +
-                (1.0f - fabs(_data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                                     _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 +
-                                     _stride_u_2 + _stride_u_3])) *
-                    ((_data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                              _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 +
-                              _stride_u_2] > 0.0f &&
-                      _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                              _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 +
-                              _stride_u_2 + 2 * _stride_u_3] < 0.0f)
-                         ? (1.0f)
-                         : (0.0f)) *
-                    _data_rho[_stride_rho_0 * ctr_0 - _stride_rho_0 +
-                              _stride_rho_1 * ctr_1 + _stride_rho_2 * ctr_2 +
-                              _stride_rho_2] *
-                    _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                            _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 +
-                            _stride_u_2 + 2 * _stride_u_3] *
-                    _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                            _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 +
-                            _stride_u_2] +
-                _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 +
-                        _stride_j_2 * ctr_2 + 6 * _stride_j_3];
+            _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 + _stride_j_2 * ctr_2 + 6 * _stride_j_3] = -(1.0f - fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + _stride_u_3])) * ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + 2 * _stride_u_3] > 0.0f && _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2] < 0.0f) ? (1.0f) : (0.0f)) * _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 + _stride_rho_2 * ctr_2] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + 2 * _stride_u_3] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2] + (1.0f - fabs(_data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + _stride_u_2 + _stride_u_3])) * ((_data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + _stride_u_2] > 0.0f && _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + _stride_u_2 + 2 * _stride_u_3] < 0.0f) ? (1.0f) : (0.0f)) * _data_rho[_stride_rho_0 * ctr_0 - _stride_rho_0 + _stride_rho_1 * ctr_1 + _stride_rho_2 * ctr_2 + _stride_rho_2] * _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + _stride_u_2 + 2 * _stride_u_3] * _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + _stride_u_2] + _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 + _stride_j_2 * ctr_2 + 6 * _stride_j_3];
           }
           if (ctr_1 > 0 && ctr_2 > 0 && ctr_0 < _size_j_0 - 1) {
-            _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 +
-                    _stride_j_2 * ctr_2 + 7 * _stride_j_3] =
-                (1.0f - fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                                     _stride_u_2 * ctr_2])) *
-                    ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                              _stride_u_2 * ctr_2 + 2 * _stride_u_3] < 0.0f &&
-                      _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                              _stride_u_2 * ctr_2 + _stride_u_3] < 0.0f)
-                         ? (1.0f)
-                         : (0.0f)) *
-                    _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 +
-                              _stride_rho_2 * ctr_2] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                            _stride_u_2 * ctr_2 + 2 * _stride_u_3] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                            _stride_u_2 * ctr_2 + _stride_u_3] -
-                (1.0f - fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 -
-                                     _stride_u_1 + _stride_u_2 * ctr_2 -
-                                     _stride_u_2])) *
-                    ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 -
-                              _stride_u_1 + _stride_u_2 * ctr_2 - _stride_u_2 +
-                              2 * _stride_u_3] > 0.0f &&
-                      _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 -
-                              _stride_u_1 + _stride_u_2 * ctr_2 - _stride_u_2 +
-                              _stride_u_3] > 0.0f)
-                         ? (1.0f)
-                         : (0.0f)) *
-                    _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 -
-                              _stride_rho_1 + _stride_rho_2 * ctr_2 -
-                              _stride_rho_2] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 -
-                            _stride_u_1 + _stride_u_2 * ctr_2 - _stride_u_2 +
-                            2 * _stride_u_3] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 -
-                            _stride_u_1 + _stride_u_2 * ctr_2 - _stride_u_2 +
-                            _stride_u_3] +
-                _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 +
-                        _stride_j_2 * ctr_2 + 7 * _stride_j_3];
+            _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 + _stride_j_2 * ctr_2 + 7 * _stride_j_3] = (1.0f - fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2])) * ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + 2 * _stride_u_3] < 0.0f && _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + _stride_u_3] < 0.0f) ? (1.0f) : (0.0f)) * _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 + _stride_rho_2 * ctr_2] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + 2 * _stride_u_3] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + _stride_u_3] - (1.0f - fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 - _stride_u_1 + _stride_u_2 * ctr_2 - _stride_u_2])) * ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 - _stride_u_1 + _stride_u_2 * ctr_2 - _stride_u_2 + 2 * _stride_u_3] > 0.0f && _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 - _stride_u_1 + _stride_u_2 * ctr_2 - _stride_u_2 + _stride_u_3] > 0.0f) ? (1.0f) : (0.0f)) * _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 - _stride_rho_1 + _stride_rho_2 * ctr_2 - _stride_rho_2] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 - _stride_u_1 + _stride_u_2 * ctr_2 - _stride_u_2 + 2 * _stride_u_3] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 - _stride_u_1 + _stride_u_2 * ctr_2 - _stride_u_2 + _stride_u_3] + _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 + _stride_j_2 * ctr_2 + 7 * _stride_j_3];
           }
           if (ctr_1 > 0 && ctr_0 < _size_j_0 - 1 && ctr_2 < _size_j_2 - 1) {
-            _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 +
-                    _stride_j_2 * ctr_2 + 8 * _stride_j_3] =
-                -(1.0f -
-                  fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                               _stride_u_2 * ctr_2])) *
-                    ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                              _stride_u_2 * ctr_2 + 2 * _stride_u_3] > 0.0f &&
-                      _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                              _stride_u_2 * ctr_2 + _stride_u_3] < 0.0f)
-                         ? (1.0f)
-                         : (0.0f)) *
-                    _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 +
-                              _stride_rho_2 * ctr_2] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                            _stride_u_2 * ctr_2 + 2 * _stride_u_3] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                            _stride_u_2 * ctr_2 + _stride_u_3] +
-                (1.0f - fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 -
-                                     _stride_u_1 + _stride_u_2 * ctr_2 +
-                                     _stride_u_2])) *
-                    ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 -
-                              _stride_u_1 + _stride_u_2 * ctr_2 + _stride_u_2 +
-                              _stride_u_3] > 0.0f &&
-                      _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 -
-                              _stride_u_1 + _stride_u_2 * ctr_2 + _stride_u_2 +
-                              2 * _stride_u_3] < 0.0f)
-                         ? (1.0f)
-                         : (0.0f)) *
-                    _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 -
-                              _stride_rho_1 + _stride_rho_2 * ctr_2 +
-                              _stride_rho_2] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 -
-                            _stride_u_1 + _stride_u_2 * ctr_2 + _stride_u_2 +
-                            2 * _stride_u_3] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 -
-                            _stride_u_1 + _stride_u_2 * ctr_2 + _stride_u_2 +
-                            _stride_u_3] +
-                _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 +
-                        _stride_j_2 * ctr_2 + 8 * _stride_j_3];
+            _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 + _stride_j_2 * ctr_2 + 8 * _stride_j_3] = -(1.0f - fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2])) * ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + 2 * _stride_u_3] > 0.0f && _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + _stride_u_3] < 0.0f) ? (1.0f) : (0.0f)) * _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 + _stride_rho_2 * ctr_2] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + 2 * _stride_u_3] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + _stride_u_3] + (1.0f - fabs(_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 - _stride_u_1 + _stride_u_2 * ctr_2 + _stride_u_2])) * ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 - _stride_u_1 + _stride_u_2 * ctr_2 + _stride_u_2 + _stride_u_3] > 0.0f && _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 - _stride_u_1 + _stride_u_2 * ctr_2 + _stride_u_2 + 2 * _stride_u_3] < 0.0f) ? (1.0f) : (0.0f)) * _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 - _stride_rho_1 + _stride_rho_2 * ctr_2 + _stride_rho_2] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 - _stride_u_1 + _stride_u_2 * ctr_2 + _stride_u_2 + 2 * _stride_u_3] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 - _stride_u_1 + _stride_u_2 * ctr_2 + _stride_u_2 + _stride_u_3] + _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 + _stride_j_2 * ctr_2 + 8 * _stride_j_3];
           }
           if (ctr_1 > 0 && ctr_2 > 0) {
-            _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 +
-                    _stride_j_2 * ctr_2 + 9 * _stride_j_3] =
-                -((_data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                           _stride_u_1 * ctr_1 - _stride_u_1 +
-                           _stride_u_2 * ctr_2 - _stride_u_2 +
-                           2 * _stride_u_3] > 0.0f &&
-                   _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                           _stride_u_1 * ctr_1 - _stride_u_1 +
-                           _stride_u_2 * ctr_2 - _stride_u_2 + _stride_u_3] >
-                       0.0f &&
-                   _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                           _stride_u_1 * ctr_1 - _stride_u_1 +
-                           _stride_u_2 * ctr_2 - _stride_u_2] > 0.0f)
-                      ? (1.0f)
-                      : (0.0f)) *
-                    _data_rho[_stride_rho_0 * ctr_0 - _stride_rho_0 +
-                              _stride_rho_1 * ctr_1 - _stride_rho_1 +
-                              _stride_rho_2 * ctr_2 - _stride_rho_2] *
-                    _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                            _stride_u_1 * ctr_1 - _stride_u_1 +
-                            _stride_u_2 * ctr_2 - _stride_u_2 +
-                            2 * _stride_u_3] *
-                    _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                            _stride_u_1 * ctr_1 - _stride_u_1 +
-                            _stride_u_2 * ctr_2 - _stride_u_2 + _stride_u_3] *
-                    _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                            _stride_u_1 * ctr_1 - _stride_u_1 +
-                            _stride_u_2 * ctr_2 - _stride_u_2] -
-                ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                          _stride_u_2 * ctr_2 + 2 * _stride_u_3] < 0.0f &&
-                  _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                          _stride_u_2 * ctr_2 + _stride_u_3] < 0.0f &&
-                  _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                          _stride_u_2 * ctr_2] < 0.0f)
-                     ? (1.0f)
-                     : (0.0f)) *
-                    _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 +
-                              _stride_rho_2 * ctr_2] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                            _stride_u_2 * ctr_2 + 2 * _stride_u_3] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                            _stride_u_2 * ctr_2 + _stride_u_3] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                            _stride_u_2 * ctr_2] +
-                _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 +
-                        _stride_j_2 * ctr_2 + 9 * _stride_j_3];
+            _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 + _stride_j_2 * ctr_2 + 9 * _stride_j_3] = -((_data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 - _stride_u_1 + _stride_u_2 * ctr_2 - _stride_u_2 + 2 * _stride_u_3] > 0.0f && _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 - _stride_u_1 + _stride_u_2 * ctr_2 - _stride_u_2 + _stride_u_3] > 0.0f && _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 - _stride_u_1 + _stride_u_2 * ctr_2 - _stride_u_2] > 0.0f) ? (1.0f) : (0.0f)) * _data_rho[_stride_rho_0 * ctr_0 - _stride_rho_0 + _stride_rho_1 * ctr_1 - _stride_rho_1 + _stride_rho_2 * ctr_2 - _stride_rho_2] * _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 - _stride_u_1 + _stride_u_2 * ctr_2 - _stride_u_2 + 2 * _stride_u_3] * _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 - _stride_u_1 + _stride_u_2 * ctr_2 - _stride_u_2 + _stride_u_3] * _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 - _stride_u_1 + _stride_u_2 * ctr_2 - _stride_u_2] - ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + 2 * _stride_u_3] < 0.0f && _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + _stride_u_3] < 0.0f && _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2] < 0.0f) ? (1.0f) : (0.0f)) * _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 + _stride_rho_2 * ctr_2] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + 2 * _stride_u_3] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + _stride_u_3] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2] + _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 + _stride_j_2 * ctr_2 + 9 * _stride_j_3];
           }
           if (ctr_1 > 0 && ctr_2 < _size_j_2 - 1) {
-            _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 +
-                    _stride_j_2 * ctr_2 + 10 * _stride_j_3] =
-                ((_data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                          _stride_u_1 * ctr_1 - _stride_u_1 +
-                          _stride_u_2 * ctr_2 + _stride_u_2 + _stride_u_3] >
-                      0.0f &&
-                  _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                          _stride_u_1 * ctr_1 - _stride_u_1 +
-                          _stride_u_2 * ctr_2 + _stride_u_2] > 0.0f &&
-                  _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                          _stride_u_1 * ctr_1 - _stride_u_1 +
-                          _stride_u_2 * ctr_2 + _stride_u_2 + 2 * _stride_u_3] <
-                      0.0f)
-                     ? (1.0f)
-                     : (0.0f)) *
-                    _data_rho[_stride_rho_0 * ctr_0 - _stride_rho_0 +
-                              _stride_rho_1 * ctr_1 - _stride_rho_1 +
-                              _stride_rho_2 * ctr_2 + _stride_rho_2] *
-                    _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                            _stride_u_1 * ctr_1 - _stride_u_1 +
-                            _stride_u_2 * ctr_2 + _stride_u_2 +
-                            2 * _stride_u_3] *
-                    _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                            _stride_u_1 * ctr_1 - _stride_u_1 +
-                            _stride_u_2 * ctr_2 + _stride_u_2 + _stride_u_3] *
-                    _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                            _stride_u_1 * ctr_1 - _stride_u_1 +
-                            _stride_u_2 * ctr_2 + _stride_u_2] +
-                ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                          _stride_u_2 * ctr_2 + 2 * _stride_u_3] > 0.0f &&
-                  _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                          _stride_u_2 * ctr_2 + _stride_u_3] < 0.0f &&
-                  _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                          _stride_u_2 * ctr_2] < 0.0f)
-                     ? (1.0f)
-                     : (0.0f)) *
-                    _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 +
-                              _stride_rho_2 * ctr_2] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                            _stride_u_2 * ctr_2 + 2 * _stride_u_3] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                            _stride_u_2 * ctr_2 + _stride_u_3] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                            _stride_u_2 * ctr_2] +
-                _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 +
-                        _stride_j_2 * ctr_2 + 10 * _stride_j_3];
+            _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 + _stride_j_2 * ctr_2 + 10 * _stride_j_3] = ((_data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 - _stride_u_1 + _stride_u_2 * ctr_2 + _stride_u_2 + _stride_u_3] > 0.0f && _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 - _stride_u_1 + _stride_u_2 * ctr_2 + _stride_u_2] > 0.0f && _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 - _stride_u_1 + _stride_u_2 * ctr_2 + _stride_u_2 + 2 * _stride_u_3] < 0.0f) ? (1.0f) : (0.0f)) * _data_rho[_stride_rho_0 * ctr_0 - _stride_rho_0 + _stride_rho_1 * ctr_1 - _stride_rho_1 + _stride_rho_2 * ctr_2 + _stride_rho_2] * _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 - _stride_u_1 + _stride_u_2 * ctr_2 + _stride_u_2 + 2 * _stride_u_3] * _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 - _stride_u_1 + _stride_u_2 * ctr_2 + _stride_u_2 + _stride_u_3] * _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 - _stride_u_1 + _stride_u_2 * ctr_2 + _stride_u_2] + ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + 2 * _stride_u_3] > 0.0f && _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + _stride_u_3] < 0.0f && _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2] < 0.0f) ? (1.0f) : (0.0f)) * _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 + _stride_rho_2 * ctr_2] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + 2 * _stride_u_3] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + _stride_u_3] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2] + _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 + _stride_j_2 * ctr_2 + 10 * _stride_j_3];
           }
           if (ctr_2 > 0 && ctr_1 < _size_j_1 - 1) {
-            _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 +
-                    _stride_j_2 * ctr_2 + 11 * _stride_j_3] =
-                ((_data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                          _stride_u_1 * ctr_1 + _stride_u_1 +
-                          _stride_u_2 * ctr_2 - _stride_u_2 + 2 * _stride_u_3] >
-                      0.0f &&
-                  _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                          _stride_u_1 * ctr_1 + _stride_u_1 +
-                          _stride_u_2 * ctr_2 - _stride_u_2] > 0.0f &&
-                  _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                          _stride_u_1 * ctr_1 + _stride_u_1 +
-                          _stride_u_2 * ctr_2 - _stride_u_2 + _stride_u_3] <
-                      0.0f)
-                     ? (1.0f)
-                     : (0.0f)) *
-                    _data_rho[_stride_rho_0 * ctr_0 - _stride_rho_0 +
-                              _stride_rho_1 * ctr_1 + _stride_rho_1 +
-                              _stride_rho_2 * ctr_2 - _stride_rho_2] *
-                    _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                            _stride_u_1 * ctr_1 + _stride_u_1 +
-                            _stride_u_2 * ctr_2 - _stride_u_2 +
-                            2 * _stride_u_3] *
-                    _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                            _stride_u_1 * ctr_1 + _stride_u_1 +
-                            _stride_u_2 * ctr_2 - _stride_u_2 + _stride_u_3] *
-                    _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                            _stride_u_1 * ctr_1 + _stride_u_1 +
-                            _stride_u_2 * ctr_2 - _stride_u_2] +
-                ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                          _stride_u_2 * ctr_2 + _stride_u_3] > 0.0f &&
-                  _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                          _stride_u_2 * ctr_2 + 2 * _stride_u_3] < 0.0f &&
-                  _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                          _stride_u_2 * ctr_2] < 0.0f)
-                     ? (1.0f)
-                     : (0.0f)) *
-                    _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 +
-                              _stride_rho_2 * ctr_2] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                            _stride_u_2 * ctr_2 + 2 * _stride_u_3] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                            _stride_u_2 * ctr_2 + _stride_u_3] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                            _stride_u_2 * ctr_2] +
-                _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 +
-                        _stride_j_2 * ctr_2 + 11 * _stride_j_3];
+            _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 + _stride_j_2 * ctr_2 + 11 * _stride_j_3] = ((_data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 + _stride_u_1 + _stride_u_2 * ctr_2 - _stride_u_2 + 2 * _stride_u_3] > 0.0f && _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 + _stride_u_1 + _stride_u_2 * ctr_2 - _stride_u_2] > 0.0f && _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 + _stride_u_1 + _stride_u_2 * ctr_2 - _stride_u_2 + _stride_u_3] < 0.0f) ? (1.0f) : (0.0f)) * _data_rho[_stride_rho_0 * ctr_0 - _stride_rho_0 + _stride_rho_1 * ctr_1 + _stride_rho_1 + _stride_rho_2 * ctr_2 - _stride_rho_2] * _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 + _stride_u_1 + _stride_u_2 * ctr_2 - _stride_u_2 + 2 * _stride_u_3] * _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 + _stride_u_1 + _stride_u_2 * ctr_2 - _stride_u_2 + _stride_u_3] * _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 + _stride_u_1 + _stride_u_2 * ctr_2 - _stride_u_2] + ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + _stride_u_3] > 0.0f && _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + 2 * _stride_u_3] < 0.0f && _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2] < 0.0f) ? (1.0f) : (0.0f)) * _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 + _stride_rho_2 * ctr_2] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + 2 * _stride_u_3] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + _stride_u_3] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2] + _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 + _stride_j_2 * ctr_2 + 11 * _stride_j_3];
           }
           if (ctr_1 < _size_j_1 - 1 && ctr_2 < _size_j_2 - 1) {
-            _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 +
-                    _stride_j_2 * ctr_2 + 12 * _stride_j_3] =
-                -((_data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                           _stride_u_1 * ctr_1 + _stride_u_1 +
-                           _stride_u_2 * ctr_2 + _stride_u_2] > 0.0f &&
-                   _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                           _stride_u_1 * ctr_1 + _stride_u_1 +
-                           _stride_u_2 * ctr_2 + _stride_u_2 +
-                           2 * _stride_u_3] < 0.0f &&
-                   _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                           _stride_u_1 * ctr_1 + _stride_u_1 +
-                           _stride_u_2 * ctr_2 + _stride_u_2 + _stride_u_3] <
-                       0.0f)
-                      ? (1.0f)
-                      : (0.0f)) *
-                    _data_rho[_stride_rho_0 * ctr_0 - _stride_rho_0 +
-                              _stride_rho_1 * ctr_1 + _stride_rho_1 +
-                              _stride_rho_2 * ctr_2 + _stride_rho_2] *
-                    _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                            _stride_u_1 * ctr_1 + _stride_u_1 +
-                            _stride_u_2 * ctr_2 + _stride_u_2 +
-                            2 * _stride_u_3] *
-                    _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                            _stride_u_1 * ctr_1 + _stride_u_1 +
-                            _stride_u_2 * ctr_2 + _stride_u_2 + _stride_u_3] *
-                    _data_u[_stride_u_0 * ctr_0 - _stride_u_0 +
-                            _stride_u_1 * ctr_1 + _stride_u_1 +
-                            _stride_u_2 * ctr_2 + _stride_u_2] -
-                ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                          _stride_u_2 * ctr_2 + 2 * _stride_u_3] > 0.0f &&
-                  _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                          _stride_u_2 * ctr_2 + _stride_u_3] > 0.0f &&
-                  _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                          _stride_u_2 * ctr_2] < 0.0f)
-                     ? (1.0f)
-                     : (0.0f)) *
-                    _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 +
-                              _stride_rho_2 * ctr_2] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                            _stride_u_2 * ctr_2 + 2 * _stride_u_3] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                            _stride_u_2 * ctr_2 + _stride_u_3] *
-                    _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 +
-                            _stride_u_2 * ctr_2] +
-                _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 +
-                        _stride_j_2 * ctr_2 + 12 * _stride_j_3];
+            _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 + _stride_j_2 * ctr_2 + 12 * _stride_j_3] = -((_data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 + _stride_u_1 + _stride_u_2 * ctr_2 + _stride_u_2] > 0.0f && _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 + _stride_u_1 + _stride_u_2 * ctr_2 + _stride_u_2 + 2 * _stride_u_3] < 0.0f && _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 + _stride_u_1 + _stride_u_2 * ctr_2 + _stride_u_2 + _stride_u_3] < 0.0f) ? (1.0f) : (0.0f)) * _data_rho[_stride_rho_0 * ctr_0 - _stride_rho_0 + _stride_rho_1 * ctr_1 + _stride_rho_1 + _stride_rho_2 * ctr_2 + _stride_rho_2] * _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 + _stride_u_1 + _stride_u_2 * ctr_2 + _stride_u_2 + 2 * _stride_u_3] * _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 + _stride_u_1 + _stride_u_2 * ctr_2 + _stride_u_2 + _stride_u_3] * _data_u[_stride_u_0 * ctr_0 - _stride_u_0 + _stride_u_1 * ctr_1 + _stride_u_1 + _stride_u_2 * ctr_2 + _stride_u_2] - ((_data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + 2 * _stride_u_3] > 0.0f && _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + _stride_u_3] > 0.0f && _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2] < 0.0f) ? (1.0f) : (0.0f)) * _data_rho[_stride_rho_0 * ctr_0 + _stride_rho_1 * ctr_1 + _stride_rho_2 * ctr_2] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + 2 * _stride_u_3] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2 + _stride_u_3] * _data_u[_stride_u_0 * ctr_0 + _stride_u_1 * ctr_1 + _stride_u_2 * ctr_2] + _data_j[_stride_j_0 * ctr_0 + _stride_j_1 * ctr_1 + _stride_j_2 * ctr_2 + 12 * _stride_j_3];
           }
         }
       }
@@ -627,14 +111,11 @@ void AdvectiveFluxKernel_single_precision::run(IBlock *block) {
   float *RESTRICT const _data_rho = rho->dataAt(-1, -1, -1, 0);
   WALBERLA_ASSERT_GREATER_EQUAL(-1, -int_c(u->nrOfGhostLayers()))
   float *RESTRICT const _data_u = u->dataAt(-1, -1, -1, 0);
-  WALBERLA_ASSERT_GREATER_EQUAL(j->xSizeWithGhostLayer(),
-                                int64_t(int64_c(j->xSize()) + 2))
+  WALBERLA_ASSERT_GREATER_EQUAL(j->xSizeWithGhostLayer(), int64_t(int64_c(j->xSize()) + 2))
   const int64_t _size_j_0 = int64_t(int64_c(j->xSize()) + 2);
-  WALBERLA_ASSERT_GREATER_EQUAL(j->ySizeWithGhostLayer(),
-                                int64_t(int64_c(j->ySize()) + 2))
+  WALBERLA_ASSERT_GREATER_EQUAL(j->ySizeWithGhostLayer(), int64_t(int64_c(j->ySize()) + 2))
   const int64_t _size_j_1 = int64_t(int64_c(j->ySize()) + 2);
-  WALBERLA_ASSERT_GREATER_EQUAL(j->zSizeWithGhostLayer(),
-                                int64_t(int64_c(j->zSize()) + 2))
+  WALBERLA_ASSERT_GREATER_EQUAL(j->zSizeWithGhostLayer(), int64_t(int64_c(j->zSize()) + 2))
   const int64_t _size_j_2 = int64_t(int64_c(j->zSize()) + 2);
   const int64_t _stride_j_0 = int64_t(j->xStride());
   const int64_t _stride_j_1 = int64_t(j->yStride());
@@ -647,18 +128,10 @@ void AdvectiveFluxKernel_single_precision::run(IBlock *block) {
   const int64_t _stride_u_1 = int64_t(u->yStride());
   const int64_t _stride_u_2 = int64_t(u->zStride());
   const int64_t _stride_u_3 = int64_t(1 * int64_t(u->fStride()));
-  internal_47df4b171f276b8c3a55fc08d45e245e::
-      advectivefluxkernel_single_precision_advectivefluxkernel_single_precision(
-          _data_j, _data_rho, _data_u, _size_j_0, _size_j_1, _size_j_2,
-          _stride_j_0, _stride_j_1, _stride_j_2, _stride_j_3, _stride_rho_0,
-          _stride_rho_1, _stride_rho_2, _stride_u_0, _stride_u_1, _stride_u_2,
-          _stride_u_3);
+  internal_47df4b171f276b8c3a55fc08d45e245e::advectivefluxkernel_single_precision_advectivefluxkernel_single_precision(_data_j, _data_rho, _data_u, _size_j_0, _size_j_1, _size_j_2, _stride_j_0, _stride_j_1, _stride_j_2, _stride_j_3, _stride_rho_0, _stride_rho_1, _stride_rho_2, _stride_u_0, _stride_u_1, _stride_u_2, _stride_u_3);
 }
 
-void AdvectiveFluxKernel_single_precision::runOnCellInterval(
-    const shared_ptr<StructuredBlockStorage> &blocks,
-    const CellInterval &globalCellInterval, cell_idx_t ghostLayers,
-    IBlock *block) {
+void AdvectiveFluxKernel_single_precision::runOnCellInterval(const shared_ptr<StructuredBlockStorage> &blocks, const CellInterval &globalCellInterval, cell_idx_t ghostLayers, IBlock *block) {
 
   CellInterval ci = globalCellInterval;
   CellInterval blockBB = blocks->getBlockCellBB(*block);
@@ -675,26 +148,20 @@ void AdvectiveFluxKernel_single_precision::runOnCellInterval(
   WALBERLA_ASSERT_GREATER_EQUAL(ci.xMin() - 1, -int_c(j->nrOfGhostLayers()))
   WALBERLA_ASSERT_GREATER_EQUAL(ci.yMin() - 1, -int_c(j->nrOfGhostLayers()))
   WALBERLA_ASSERT_GREATER_EQUAL(ci.zMin() - 1, -int_c(j->nrOfGhostLayers()))
-  float *RESTRICT const _data_j =
-      j->dataAt(ci.xMin() - 1, ci.yMin() - 1, ci.zMin() - 1, 0);
+  float *RESTRICT const _data_j = j->dataAt(ci.xMin() - 1, ci.yMin() - 1, ci.zMin() - 1, 0);
   WALBERLA_ASSERT_GREATER_EQUAL(ci.xMin() - 1, -int_c(rho->nrOfGhostLayers()))
   WALBERLA_ASSERT_GREATER_EQUAL(ci.yMin() - 1, -int_c(rho->nrOfGhostLayers()))
   WALBERLA_ASSERT_GREATER_EQUAL(ci.zMin() - 1, -int_c(rho->nrOfGhostLayers()))
-  float *RESTRICT const _data_rho =
-      rho->dataAt(ci.xMin() - 1, ci.yMin() - 1, ci.zMin() - 1, 0);
+  float *RESTRICT const _data_rho = rho->dataAt(ci.xMin() - 1, ci.yMin() - 1, ci.zMin() - 1, 0);
   WALBERLA_ASSERT_GREATER_EQUAL(ci.xMin() - 1, -int_c(u->nrOfGhostLayers()))
   WALBERLA_ASSERT_GREATER_EQUAL(ci.yMin() - 1, -int_c(u->nrOfGhostLayers()))
   WALBERLA_ASSERT_GREATER_EQUAL(ci.zMin() - 1, -int_c(u->nrOfGhostLayers()))
-  float *RESTRICT const _data_u =
-      u->dataAt(ci.xMin() - 1, ci.yMin() - 1, ci.zMin() - 1, 0);
-  WALBERLA_ASSERT_GREATER_EQUAL(j->xSizeWithGhostLayer(),
-                                int64_t(int64_c(ci.xSize()) + 2))
+  float *RESTRICT const _data_u = u->dataAt(ci.xMin() - 1, ci.yMin() - 1, ci.zMin() - 1, 0);
+  WALBERLA_ASSERT_GREATER_EQUAL(j->xSizeWithGhostLayer(), int64_t(int64_c(ci.xSize()) + 2))
   const int64_t _size_j_0 = int64_t(int64_c(ci.xSize()) + 2);
-  WALBERLA_ASSERT_GREATER_EQUAL(j->ySizeWithGhostLayer(),
-                                int64_t(int64_c(ci.ySize()) + 2))
+  WALBERLA_ASSERT_GREATER_EQUAL(j->ySizeWithGhostLayer(), int64_t(int64_c(ci.ySize()) + 2))
   const int64_t _size_j_1 = int64_t(int64_c(ci.ySize()) + 2);
-  WALBERLA_ASSERT_GREATER_EQUAL(j->zSizeWithGhostLayer(),
-                                int64_t(int64_c(ci.zSize()) + 2))
+  WALBERLA_ASSERT_GREATER_EQUAL(j->zSizeWithGhostLayer(), int64_t(int64_c(ci.zSize()) + 2))
   const int64_t _size_j_2 = int64_t(int64_c(ci.zSize()) + 2);
   const int64_t _stride_j_0 = int64_t(j->xStride());
   const int64_t _stride_j_1 = int64_t(j->yStride());
@@ -707,19 +174,13 @@ void AdvectiveFluxKernel_single_precision::runOnCellInterval(
   const int64_t _stride_u_1 = int64_t(u->yStride());
   const int64_t _stride_u_2 = int64_t(u->zStride());
   const int64_t _stride_u_3 = int64_t(1 * int64_t(u->fStride()));
-  internal_47df4b171f276b8c3a55fc08d45e245e::
-      advectivefluxkernel_single_precision_advectivefluxkernel_single_precision(
-          _data_j, _data_rho, _data_u, _size_j_0, _size_j_1, _size_j_2,
-          _stride_j_0, _stride_j_1, _stride_j_2, _stride_j_3, _stride_rho_0,
-          _stride_rho_1, _stride_rho_2, _stride_u_0, _stride_u_1, _stride_u_2,
-          _stride_u_3);
+  internal_47df4b171f276b8c3a55fc08d45e245e::advectivefluxkernel_single_precision_advectivefluxkernel_single_precision(_data_j, _data_rho, _data_u, _size_j_0, _size_j_1, _size_j_2, _stride_j_0, _stride_j_1, _stride_j_2, _stride_j_3, _stride_rho_0, _stride_rho_1, _stride_rho_2, _stride_u_0, _stride_u_1, _stride_u_2, _stride_u_3);
 }
 
 } // namespace pystencils
 } // namespace walberla
 
-#if (defined WALBERLA_CXX_COMPILER_IS_GNU) ||                                  \
-    (defined WALBERLA_CXX_COMPILER_IS_CLANG)
+#if (defined WALBERLA_CXX_COMPILER_IS_GNU) || (defined WALBERLA_CXX_COMPILER_IS_CLANG)
 #pragma GCC diagnostic pop
 #endif
 

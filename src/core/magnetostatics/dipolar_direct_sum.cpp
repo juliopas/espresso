@@ -114,12 +114,12 @@ static auto get_n_cut(BoxGeometry const &box_geo, int n_replicas) {
 }
 
 /**
- * Real-space image shifts n x box_l inside the |ncut| sphere. Index 0 is the
- * primary (zero) shift so self-interaction loops start at index 1.
+ * Real-space image shifts n x box_l over the full index cube
+ * [-ncut, ncut]. Index 0 is the primary (zero) shift so self-interaction
+ * loops start at index 1.
  */
 static std::vector<Utils::Vector3d>
 make_image_shifts(Utils::Vector3i const &ncut, Utils::Vector3d const &box_l) {
-  auto const ncut2 = ncut.norm2();
   std::vector<Utils::Vector3d> shifts;
   shifts.push_back({0., 0., 0.});
   for (int nx = -ncut[0]; nx <= ncut[0]; ++nx)
@@ -127,8 +127,7 @@ make_image_shifts(Utils::Vector3i const &ncut, Utils::Vector3d const &box_l) {
       for (int nz = -ncut[2]; nz <= ncut[2]; ++nz) {
         if (nx == 0 && ny == 0 && nz == 0)
           continue;
-        if (nx * nx + ny * ny + nz * nz <= ncut2)
-          shifts.push_back({nx * box_l[0], ny * box_l[1], nz * box_l[2]});
+        shifts.push_back({nx * box_l[0], ny * box_l[1], nz * box_l[2]});
       }
   return shifts;
 }
@@ -302,9 +301,10 @@ void DipolarDirectSum::add_long_range_forces_cpu() const {
   Kokkos::fence();
 
 #ifdef ESPRESSO_NPT
-  // As with DipolarP3M, the energy is not a valid
-  // substitute for the virial trace for dipole-dipole interactions, so the
-  // pressure tensor (see long_range_pressure()) is reused instead.
+  // The trace of the virial comes from the pressure tensor (see
+  // long_range_pressure()), the route shared with DipolarP3M. For the
+  // direct sum it also equals 3x the energy, since the pair potential is
+  // homogeneous of degree -3 (tested in dipolar_direct_summation_replicas.py).
   if (system.has_npt_enabled()) {
     auto const pressure_tensor = long_range_pressure();
     get_system().npt_add_virial_contribution(
@@ -375,9 +375,10 @@ double DipolarDirectSum::long_range_energy_cpu() const {
         auto const &pos_i = pm[gi].pos;
         auto const &m_i = pm[gi].m;
 
-        /* (a) self-images (shifts[1..], primary excluded) */
+        /* (a) self-images (shifts[1..], primary excluded), counted with a
+         * factor 1/2: the images at +n and -n are the same bond */
         for (std::size_t s = 1; s < n_shifts; ++s)
-          u_local += pair_potential(shifts_ptr[s], m_i, m_i);
+          u_local += 0.5 * pair_potential(shifts_ptr[s], m_i, m_i);
 
         /* (b) pairs with j in (gi, offset + n_local) */
         for (auto j = gi + 1; j < offset + n_local; ++j) {
@@ -427,7 +428,10 @@ double DipolarDirectSum::long_range_energy_cpu() const {
  * This employs a parallel N-square loop over all particle pairs.
  * The dipole-dipole force is not central (unlike Coulomb), so the pair
  * contribution to the virial only accounts for the force, not the torque,
- * matching the convention used by @ref DipolarP3M.
+ * matching the convention used by @ref DipolarP3M. The interaction of a
+ * particle with its own periodic images keeps the factor 1/2 of the
+ * virial, for the same reason as in
+ * @ref DipolarDirectSum::long_range_energy_cpu.
  */
 Utils::Vector9d DipolarDirectSum::long_range_pressure() const {
   if (m_is_gpu) {
@@ -484,11 +488,12 @@ Utils::Vector9d DipolarDirectSum::long_range_pressure() const {
         auto const &pos_i = pm[gi].pos;
         auto const &m_i = pm[gi].m;
 
-        /* (a) self-images (shifts[1..], primary excluded) */
+        /* (a) self-images (shifts[1..], primary excluded), counted with a
+         * factor 1/2 as in @ref DipolarDirectSum::long_range_energy_cpu */
         for (std::size_t s = 1; s < n_shifts; ++s) {
           auto const rn = shifts_ptr[s];
-          psum += Utils::flatten(
-              Utils::tensor_product(rn, pair_force(rn, m_i, m_i).f));
+          psum += 0.5 * Utils::flatten(Utils::tensor_product(
+                            rn, pair_force(rn, m_i, m_i).f));
         }
 
         /* (b) pairs with j in (gi, offset + n_local) */

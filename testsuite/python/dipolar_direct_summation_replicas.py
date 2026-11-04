@@ -64,17 +64,14 @@ class Test(ut.TestCase):
     def image_indices(periodicity, n_replicas):
         """
         Image set of the core: ``get_n_cut()`` returns
-        ``ncut = n_replicas * periodicity`` and ``for_each_image()`` visits
-        the index cube ``[-ncut, ncut]`` clipped by the ball
-        ``nx^2 + ny^2 + nz^2 <= |ncut|^2``.
+        ``ncut = n_replicas * periodicity`` and ``make_image_shifts()``
+        visits the full index cube ``[-ncut, ncut]``.
         """
         ncut = n_replicas * np.array(periodicity, dtype=int)
-        ncut2 = int(ncut @ ncut)
         return [(nx, ny, nz)
                 for nx in range(-ncut[0], ncut[0] + 1)
                 for ny in range(-ncut[1], ncut[1] + 1)
-                for nz in range(-ncut[2], ncut[2] + 1)
-                if nx**2 + ny**2 + nz**2 <= ncut2]
+                for nz in range(-ncut[2], ncut[2] + 1)]
 
     @staticmethod
     def pair_potential(d, m1, m2):
@@ -136,6 +133,35 @@ class Test(ut.TestCase):
     @utx.skipIfMissingFeatures("CUDA")
     def test_energy_gpu(self):
         self.check_energy(tol={"rtol": 1e-4, "atol": 1e-6}, gpu=True)
+
+    def test_virial_trace_cpu(self):
+        """
+        The dipolar pair potential is homogeneous of degree -3 in the
+        distance, so ``r . F = 3 U`` for every image term, and the trace of
+        the virial equals three times the energy when both give the
+        self-images the same weight. Together with :meth:`test_energy_cpu`
+        this pins the factor 1/2 of the self-image virial.
+        """
+        system = self.system
+        volume = float(np.prod(system.box_l))
+        for periodicity in ([True, True, True], [True, True, False]):
+            for n_replicas in [1, 2]:
+                with self.subTest(periodicity=periodicity,
+                                  n_replicas=n_replicas):
+                    system.periodicity = periodicity
+                    self.add_particles()
+                    system.magnetostatics.solver = \
+                        espressomd.magnetostatics.DipolarDirectSum(
+                            prefactor=1., n_replicas=n_replicas)
+                    system.integrator.run(0, recalc_forces=True)
+                    energy = system.analysis.energy()["dipolar", 1]
+                    pressure_tensor = \
+                        system.analysis.pressure_tensor()["dipolar", 1]
+                    np.testing.assert_allclose(
+                        np.trace(pressure_tensor) * volume, 3. * energy,
+                        rtol=1e-9)
+                system.part.clear()
+                system.magnetostatics.clear()
 
     def test_cubic_box_cpu(self):
         """

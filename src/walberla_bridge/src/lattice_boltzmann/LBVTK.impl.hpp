@@ -210,6 +210,7 @@ void LBWalberlaImpl<FloatType, Architecture>::register_vtk_field_writers(
             Vector3<uint_t>(bci.xSize(), bci.ySize(), bci.zSize()));
       }
     };
+
     vtk_obj.addBeforeFunction(std::move(before_function));
     vtk_obj.addCellDataWriter(velocity_writer);
   }

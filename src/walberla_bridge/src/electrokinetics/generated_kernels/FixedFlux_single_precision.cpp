@@ -17,9 +17,7 @@
 //! \\author pystencils
 //======================================================================================================================
 
-// kernel generated with pystencils v1.4+1.ge851f4e, lbmpy v1.4+1.ge9efe34,
-// sympy v1.12.1, lbmpy_walberla/pystencils_walberla from waLBerla commit
-// 3247aa7395049ca5bfb69d34d55e45db19fa439c
+// kernel generated with pystencils v1.4+1.ge851f4e, lbmpy v1.4+1.ge9efe34, sympy v1.12.1, lbmpy_walberla/pystencils_walberla from waLBerla commit 3247aa7395049ca5bfb69d34d55e45db19fa439c
 
 #include "FixedFlux_single_precision.h"
 #include "core/DataTypes.h"
@@ -49,12 +47,7 @@ namespace pystencils {
 #endif
 // NOLINTBEGIN(readability-non-const-parameter*)
 namespace internal_11b127eed0b5044a0a655e8444f26034 {
-static FUNC_PREFIX void
-fixedflux_single_precision_boundary_FixedFlux_single_precision(
-    float *RESTRICT const _data_flux, uint8_t *RESTRICT const _data_indexVector,
-    int64_t const _stride_flux_0, int64_t const _stride_flux_1,
-    int64_t const _stride_flux_2, int64_t const _stride_flux_3,
-    int32_t indexVectorSize) {
+static FUNC_PREFIX void fixedflux_single_precision_boundary_FixedFlux_single_precision(float *RESTRICT const _data_flux, uint8_t *RESTRICT const _data_indexVector, int64_t const _stride_flux_0, int64_t const _stride_flux_1, int64_t const _stride_flux_2, int64_t const _stride_flux_3, int32_t indexVectorSize) {
 #pragma omp parallel
   {
 #pragma omp for schedule(static)
@@ -65,345 +58,82 @@ fixedflux_single_precision_boundary_FixedFlux_single_precision(
 
       const int32_t dir = *((int32_t *)(&_data_indexVector[28 * ctr_0 + 12]));
       if (((dir) == (26))) {
-        _data_flux[_stride_flux_0 * x + _stride_flux_1 * y +
-                   _stride_flux_2 * z + 9 * _stride_flux_3] =
-            -0.1111111111111111f *
-                *((float *)(&_data_indexVector[28 * ctr_0 + 16])) -
-            0.1111111111111111f *
-                *((float *)(&_data_indexVector[28 * ctr_0 + 20])) -
-            0.1111111111111111f *
-                *((float *)(&_data_indexVector[28 * ctr_0 + 24]));
+        _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_2 * z + 9 * _stride_flux_3] = -0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 16])) - 0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 20])) - 0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 24]));
       } else {
         if (((dir) == (25))) {
-          _data_flux[_stride_flux_0 * x + _stride_flux_0 + _stride_flux_1 * y -
-                     _stride_flux_1 + _stride_flux_2 * z - _stride_flux_2 +
-                     12 * _stride_flux_3] =
-              -0.1111111111111111f *
-                  *((float *)(&_data_indexVector[28 * ctr_0 + 16])) +
-              0.1111111111111111f *
-                  *((float *)(&_data_indexVector[28 * ctr_0 + 20])) +
-              0.1111111111111111f *
-                  *((float *)(&_data_indexVector[28 * ctr_0 + 24]));
+          _data_flux[_stride_flux_0 * x + _stride_flux_0 + _stride_flux_1 * y - _stride_flux_1 + _stride_flux_2 * z - _stride_flux_2 + 12 * _stride_flux_3] = -0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 16])) + 0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 20])) + 0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 24]));
         } else {
           if (((dir) == (24))) {
-            _data_flux[_stride_flux_0 * x + _stride_flux_1 * y +
-                       _stride_flux_2 * z + 11 * _stride_flux_3] =
-                -0.1111111111111111f *
-                    *((float *)(&_data_indexVector[28 * ctr_0 + 16])) -
-                0.1111111111111111f *
-                    *((float *)(&_data_indexVector[28 * ctr_0 + 24])) +
-                0.1111111111111111f *
-                    *((float *)(&_data_indexVector[28 * ctr_0 + 20]));
+            _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_2 * z + 11 * _stride_flux_3] = -0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 16])) - 0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 24])) + 0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 20]));
           } else {
             if (((dir) == (23))) {
-              _data_flux[_stride_flux_0 * x + _stride_flux_0 +
-                         _stride_flux_1 * y + _stride_flux_1 +
-                         _stride_flux_2 * z - _stride_flux_2 +
-                         10 * _stride_flux_3] =
-                  -0.1111111111111111f *
-                      *((float *)(&_data_indexVector[28 * ctr_0 + 16])) -
-                  0.1111111111111111f *
-                      *((float *)(&_data_indexVector[28 * ctr_0 + 20])) +
-                  0.1111111111111111f *
-                      *((float *)(&_data_indexVector[28 * ctr_0 + 24]));
+              _data_flux[_stride_flux_0 * x + _stride_flux_0 + _stride_flux_1 * y + _stride_flux_1 + _stride_flux_2 * z - _stride_flux_2 + 10 * _stride_flux_3] = -0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 16])) - 0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 20])) + 0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 24]));
             } else {
               if (((dir) == (22))) {
-                _data_flux[_stride_flux_0 * x + _stride_flux_1 * y +
-                           _stride_flux_2 * z + 10 * _stride_flux_3] =
-                    -0.1111111111111111f *
-                        *((float *)(&_data_indexVector[28 * ctr_0 + 16])) -
-                    0.1111111111111111f *
-                        *((float *)(&_data_indexVector[28 * ctr_0 + 20])) +
-                    0.1111111111111111f *
-                        *((float *)(&_data_indexVector[28 * ctr_0 + 24]));
+                _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_2 * z + 10 * _stride_flux_3] = -0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 16])) - 0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 20])) + 0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 24]));
               } else {
                 if (((dir) == (21))) {
-                  _data_flux[_stride_flux_0 * x + _stride_flux_0 +
-                             _stride_flux_1 * y - _stride_flux_1 +
-                             _stride_flux_2 * z + _stride_flux_2 +
-                             11 * _stride_flux_3] =
-                      -0.1111111111111111f *
-                          *((float *)(&_data_indexVector[28 * ctr_0 + 16])) -
-                      0.1111111111111111f *
-                          *((float *)(&_data_indexVector[28 * ctr_0 + 24])) +
-                      0.1111111111111111f *
-                          *((float *)(&_data_indexVector[28 * ctr_0 + 20]));
+                  _data_flux[_stride_flux_0 * x + _stride_flux_0 + _stride_flux_1 * y - _stride_flux_1 + _stride_flux_2 * z + _stride_flux_2 + 11 * _stride_flux_3] = -0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 16])) - 0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 24])) + 0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 20]));
                 } else {
                   if (((dir) == (20))) {
-                    _data_flux[_stride_flux_0 * x + _stride_flux_1 * y +
-                               _stride_flux_2 * z + 12 * _stride_flux_3] =
-                        -0.1111111111111111f *
-                            *((float *)(&_data_indexVector[28 * ctr_0 + 16])) +
-                        0.1111111111111111f *
-                            *((float *)(&_data_indexVector[28 * ctr_0 + 20])) +
-                        0.1111111111111111f *
-                            *((float *)(&_data_indexVector[28 * ctr_0 + 24]));
+                    _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_2 * z + 12 * _stride_flux_3] = -0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 16])) + 0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 20])) + 0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 24]));
                   } else {
                     if (((dir) == (19))) {
-                      _data_flux[_stride_flux_0 * x + _stride_flux_0 +
-                                 _stride_flux_1 * y + _stride_flux_1 +
-                                 _stride_flux_2 * z + _stride_flux_2 +
-                                 9 * _stride_flux_3] =
-                          -0.1111111111111111f *
-                              *((float
-                                     *)(&_data_indexVector[28 * ctr_0 + 16])) -
-                          0.1111111111111111f *
-                              *((float
-                                     *)(&_data_indexVector[28 * ctr_0 + 20])) -
-                          0.1111111111111111f *
-                              *((float *)(&_data_indexVector[28 * ctr_0 + 24]));
+                      _data_flux[_stride_flux_0 * x + _stride_flux_0 + _stride_flux_1 * y + _stride_flux_1 + _stride_flux_2 * z + _stride_flux_2 + 9 * _stride_flux_3] = -0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 16])) - 0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 20])) - 0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 24]));
                     } else {
                       if (((dir) == (18))) {
-                        _data_flux[_stride_flux_0 * x + _stride_flux_0 +
-                                   _stride_flux_1 * y + _stride_flux_2 * z -
-                                   _stride_flux_2 + 6 * _stride_flux_3] =
-                            -0.1111111111111111f *
-                                *((float *)(&_data_indexVector[28 * ctr_0 +
-                                                               16])) +
-                            0.1111111111111111f *
-                                *((float
-                                       *)(&_data_indexVector[28 * ctr_0 + 24]));
+                        _data_flux[_stride_flux_0 * x + _stride_flux_0 + _stride_flux_1 * y + _stride_flux_2 * z - _stride_flux_2 + 6 * _stride_flux_3] = -0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 16])) + 0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 24]));
                       } else {
                         if (((dir) == (17))) {
-                          _data_flux[_stride_flux_0 * x + _stride_flux_1 * y +
-                                     _stride_flux_2 * z + 5 * _stride_flux_3] =
-                              -0.1111111111111111f *
-                                  *((float *)(&_data_indexVector[28 * ctr_0 +
-                                                                 16])) -
-                              0.1111111111111111f *
-                                  *((float *)(&_data_indexVector[28 * ctr_0 +
-                                                                 24]));
+                          _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_2 * z + 5 * _stride_flux_3] = -0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 16])) - 0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 24]));
                         } else {
                           if (((dir) == (16))) {
-                            _data_flux[_stride_flux_0 * x + _stride_flux_1 * y +
-                                       _stride_flux_2 * z +
-                                       7 * _stride_flux_3] =
-                                -0.1111111111111111f *
-                                    *((float *)(&_data_indexVector[28 * ctr_0 +
-                                                                   20])) -
-                                0.1111111111111111f *
-                                    *((float *)(&_data_indexVector[28 * ctr_0 +
-                                                                   24]));
+                            _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_2 * z + 7 * _stride_flux_3] = -0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 20])) - 0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 24]));
                           } else {
                             if (((dir) == (15))) {
-                              _data_flux[_stride_flux_0 * x +
-                                         _stride_flux_1 * y + _stride_flux_1 +
-                                         _stride_flux_2 * z - _stride_flux_2 +
-                                         8 * _stride_flux_3] =
-                                  -0.1111111111111111f *
-                                      *((float
-                                             *)(&_data_indexVector[28 * ctr_0 +
-                                                                   20])) +
-                                  0.1111111111111111f *
-                                      *((float
-                                             *)(&_data_indexVector[28 * ctr_0 +
-                                                                   24]));
+                              _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_1 + _stride_flux_2 * z - _stride_flux_2 + 8 * _stride_flux_3] = -0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 20])) + 0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 24]));
                             } else {
                               if (((dir) == (14))) {
-                                _data_flux[_stride_flux_0 * x + _stride_flux_0 +
-                                           _stride_flux_1 * y +
-                                           _stride_flux_2 * z + _stride_flux_2 +
-                                           5 * _stride_flux_3] =
-                                    -0.1111111111111111f *
-                                        *((float *)(&_data_indexVector
-                                                        [28 * ctr_0 + 16])) -
-                                    0.1111111111111111f *
-                                        *((float *)(&_data_indexVector
-                                                        [28 * ctr_0 + 24]));
+                                _data_flux[_stride_flux_0 * x + _stride_flux_0 + _stride_flux_1 * y + _stride_flux_2 * z + _stride_flux_2 + 5 * _stride_flux_3] = -0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 16])) - 0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 24]));
                               } else {
                                 if (((dir) == (13))) {
-                                  _data_flux[_stride_flux_0 * x +
-                                             _stride_flux_1 * y +
-                                             _stride_flux_2 * z +
-                                             6 * _stride_flux_3] =
-                                      -0.1111111111111111f *
-                                          *((float *)(&_data_indexVector
-                                                          [28 * ctr_0 + 16])) +
-                                      0.1111111111111111f *
-                                          *((float *)(&_data_indexVector
-                                                          [28 * ctr_0 + 24]));
+                                  _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_2 * z + 6 * _stride_flux_3] = -0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 16])) + 0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 24]));
                                 } else {
                                   if (((dir) == (12))) {
-                                    _data_flux[_stride_flux_0 * x +
-                                               _stride_flux_1 * y +
-                                               _stride_flux_2 * z +
-                                               8 * _stride_flux_3] =
-                                        -0.1111111111111111f *
-                                            *((float
-                                                   *)(&_data_indexVector
-                                                          [28 * ctr_0 + 20])) +
-                                        0.1111111111111111f *
-                                            *((float *)(&_data_indexVector
-                                                            [28 * ctr_0 + 24]));
+                                    _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_2 * z + 8 * _stride_flux_3] = -0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 20])) + 0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 24]));
                                   } else {
                                     if (((dir) == (11))) {
-                                      _data_flux[_stride_flux_0 * x +
-                                                 _stride_flux_1 * y +
-                                                 _stride_flux_1 +
-                                                 _stride_flux_2 * z +
-                                                 _stride_flux_2 +
-                                                 7 * _stride_flux_3] =
-                                          -0.1111111111111111f *
-                                              *((float *)(&_data_indexVector
-                                                              [28 * ctr_0 +
-                                                               20])) -
-                                          0.1111111111111111f *
-                                              *((float
-                                                     *)(&_data_indexVector
-                                                            [28 * ctr_0 + 24]));
+                                      _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_1 + _stride_flux_2 * z + _stride_flux_2 + 7 * _stride_flux_3] = -0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 20])) - 0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 24]));
                                     } else {
                                       if (((dir) == (10))) {
-                                        _data_flux[_stride_flux_0 * x +
-                                                   _stride_flux_0 +
-                                                   _stride_flux_1 * y -
-                                                   _stride_flux_1 +
-                                                   _stride_flux_2 * z +
-                                                   4 * _stride_flux_3] =
-                                            -0.1111111111111111f *
-                                                *((float *)(&_data_indexVector
-                                                                [28 * ctr_0 +
-                                                                 16])) +
-                                            0.1111111111111111f *
-                                                *((float *)(&_data_indexVector
-                                                                [28 * ctr_0 +
-                                                                 20]));
+                                        _data_flux[_stride_flux_0 * x + _stride_flux_0 + _stride_flux_1 * y - _stride_flux_1 + _stride_flux_2 * z + 4 * _stride_flux_3] = -0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 16])) + 0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 20]));
                                       } else {
                                         if (((dir) == (9))) {
-                                          _data_flux[_stride_flux_0 * x +
-                                                     _stride_flux_1 * y +
-                                                     _stride_flux_2 * z +
-                                                     3 * _stride_flux_3] =
-                                              -0.1111111111111111f *
-                                                  *((float *)(&_data_indexVector
-                                                                  [28 * ctr_0 +
-                                                                   16])) -
-                                              0.1111111111111111f *
-                                                  *((float *)(&_data_indexVector
-                                                                  [28 * ctr_0 +
-                                                                   20]));
+                                          _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_2 * z + 3 * _stride_flux_3] = -0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 16])) - 0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 20]));
                                         } else {
                                           if (((dir) == (8))) {
-                                            _data_flux[_stride_flux_0 * x +
-                                                       _stride_flux_0 +
-                                                       _stride_flux_1 * y +
-                                                       _stride_flux_1 +
-                                                       _stride_flux_2 * z +
-                                                       3 * _stride_flux_3] =
-                                                -0.1111111111111111f *
-                                                    *((float
-                                                           *)(&_data_indexVector
-                                                                  [28 * ctr_0 +
-                                                                   16])) -
-                                                0.1111111111111111f *
-                                                    *((float
-                                                           *)(&_data_indexVector
-                                                                  [28 * ctr_0 +
-                                                                   20]));
+                                            _data_flux[_stride_flux_0 * x + _stride_flux_0 + _stride_flux_1 * y + _stride_flux_1 + _stride_flux_2 * z + 3 * _stride_flux_3] = -0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 16])) - 0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 20]));
                                           } else {
                                             if (((dir) == (7))) {
-                                              _data_flux[_stride_flux_0 * x +
-                                                         _stride_flux_1 * y +
-                                                         _stride_flux_2 * z +
-                                                         4 * _stride_flux_3] =
-                                                  -0.1111111111111111f *
-                                                      *((float
-                                                             *)(&_data_indexVector
-                                                                    [28 *
-                                                                         ctr_0 +
-                                                                     16])) +
-                                                  0.1111111111111111f *
-                                                      *((float
-                                                             *)(&_data_indexVector
-                                                                    [28 *
-                                                                         ctr_0 +
-                                                                     20]));
+                                              _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_2 * z + 4 * _stride_flux_3] = -0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 16])) + 0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 20]));
                                             } else {
                                               if (((dir) == (6))) {
-                                                _data_flux[_stride_flux_0 * x +
-                                                           _stride_flux_1 * y +
-                                                           _stride_flux_2 * z +
-                                                           2 * _stride_flux_3] =
-                                                    -0.1111111111111111f *
-                                                    *((float
-                                                           *)(&_data_indexVector
-                                                                  [28 * ctr_0 +
-                                                                   24]));
+                                                _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_2 * z + 2 * _stride_flux_3] = -0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 24]));
                                               } else {
                                                 if (((dir) == (5))) {
-                                                  _data_flux[_stride_flux_0 *
-                                                                 x +
-                                                             _stride_flux_1 *
-                                                                 y +
-                                                             _stride_flux_2 *
-                                                                 z +
-                                                             _stride_flux_2 +
-                                                             2 * _stride_flux_3] =
-                                                      -0.1111111111111111f *
-                                                      *((float
-                                                             *)(&_data_indexVector
-                                                                    [28 *
-                                                                         ctr_0 +
-                                                                     24]));
+                                                  _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_2 * z + _stride_flux_2 + 2 * _stride_flux_3] = -0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 24]));
                                                 } else {
                                                   if (((dir) == (4))) {
-                                                    _data_flux[_stride_flux_0 *
-                                                                   x +
-                                                               _stride_flux_0 +
-                                                               _stride_flux_1 *
-                                                                   y +
-                                                               _stride_flux_2 *
-                                                                   z] =
-                                                        -0.1111111111111111f *
-                                                        *((float
-                                                               *)(&_data_indexVector
-                                                                      [28 *
-                                                                           ctr_0 +
-                                                                       16]));
+                                                    _data_flux[_stride_flux_0 * x + _stride_flux_0 + _stride_flux_1 * y + _stride_flux_2 * z] = -0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 16]));
                                                   } else {
                                                     if (((dir) == (3))) {
-                                                      _data_flux[_stride_flux_0 *
-                                                                     x +
-                                                                 _stride_flux_1 *
-                                                                     y +
-                                                                 _stride_flux_2 *
-                                                                     z] =
-                                                          -0.1111111111111111f *
-                                                          *((float
-                                                                 *)(&_data_indexVector
-                                                                        [28 *
-                                                                             ctr_0 +
-                                                                         16]));
+                                                      _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_2 * z] = -0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 16]));
                                                     } else {
                                                       if (((dir) == (2))) {
-                                                        _data_flux[_stride_flux_0 *
-                                                                       x +
-                                                                   _stride_flux_1 *
-                                                                       y +
-                                                                   _stride_flux_2 *
-                                                                       z +
-                                                                   _stride_flux_3] =
-                                                            -0.1111111111111111f *
-                                                            *((float
-                                                                   *)(&_data_indexVector
-                                                                          [28 *
-                                                                               ctr_0 +
-                                                                           20]));
+                                                        _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_2 * z + _stride_flux_3] = -0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 20]));
                                                       } else {
                                                         if (((dir) == (1))) {
-                                                          _data_flux[_stride_flux_0 *
-                                                                         x +
-                                                                     _stride_flux_1 *
-                                                                         y +
-                                                                     _stride_flux_1 +
-                                                                     _stride_flux_2 *
-                                                                         z +
-                                                                     _stride_flux_3] =
-                                                              -0.1111111111111111f *
-                                                              *((float
-                                                                     *)(&_data_indexVector
-                                                                            [28 *
-                                                                                 ctr_0 +
-                                                                             20]));
+                                                          _data_flux[_stride_flux_0 * x + _stride_flux_1 * y + _stride_flux_1 + _stride_flux_2 * z + _stride_flux_3] = -0.1111111111111111f * *((float *)(&_data_indexVector[28 * ctr_0 + 20]));
                                                         }
                                                       }
                                                     }
@@ -444,8 +174,7 @@ fixedflux_single_precision_boundary_FixedFlux_single_precision(
 #pragma pop
 #endif
 
-void FixedFlux_single_precision::run_impl(IBlock *block,
-                                          IndexVectors::Type type) {
+void FixedFlux_single_precision::run_impl(IBlock *block, IndexVectors::Type type) {
   auto *indexVectors = block->getData<IndexVectors>(indexVectorID);
   int32_t indexVectorSize = int32_c(indexVectors->indexVector(type).size());
   if (indexVectorSize == 0)
@@ -463,10 +192,7 @@ void FixedFlux_single_precision::run_impl(IBlock *block,
   const int64_t _stride_flux_1 = int64_t(flux->yStride());
   const int64_t _stride_flux_2 = int64_t(flux->zStride());
   const int64_t _stride_flux_3 = int64_t(1 * int64_t(flux->fStride()));
-  internal_11b127eed0b5044a0a655e8444f26034::
-      fixedflux_single_precision_boundary_FixedFlux_single_precision(
-          _data_flux, _data_indexVector, _stride_flux_0, _stride_flux_1,
-          _stride_flux_2, _stride_flux_3, indexVectorSize);
+  internal_11b127eed0b5044a0a655e8444f26034::fixedflux_single_precision_boundary_FixedFlux_single_precision(_data_flux, _data_indexVector, _stride_flux_0, _stride_flux_1, _stride_flux_2, _stride_flux_3, indexVectorSize);
 }
 
 void FixedFlux_single_precision::run(IBlock *block) {

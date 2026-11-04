@@ -216,12 +216,6 @@ set_property(
   TARGET espresso_compiler_flags APPEND
   PROPERTY INTERFACE_COMPILE_FEATURES cxx_std_${ESPRESSO_MINIMAL_CXX_STANDARD})
 
-if(ESPRESSO_BUILD_WITH_SHARED_MEMORY_PARALLELISM)
-  add_library(espresso_kokkos_compiler_flags INTERFACE)
-  add_library(espresso::kokkos::compiler_flags ALIAS
-              espresso_kokkos_compiler_flags)
-endif()
-
 #
 # AVX2 support
 #
@@ -304,9 +298,6 @@ if(ESPRESSO_BUILD_WITH_CUDA)
       # sm_120: RTX-5000 series (Blackwell)
       # cmake-format: on
       set(ESPRESSO_CUDA_ARCHITECTURES "75;86;89")
-      if(Kokkos_ENABLE_CUDA)
-        set(ESPRESSO_CUDA_ARCHITECTURES "86")
-      endif()
     else()
       set(ESPRESSO_CUDA_ARCHITECTURES "$ENV{CUDAARCHS}")
     endif()
@@ -314,14 +305,6 @@ if(ESPRESSO_BUILD_WITH_CUDA)
         CACHE INTERNAL "")
   endif()
   set(CMAKE_CUDA_ARCHITECTURES "${ESPRESSO_CMAKE_CUDA_ARCHITECTURES}")
-  list(LENGTH CMAKE_CUDA_ARCHITECTURES ESPRESSO_CMAKE_CUDA_ARCHITECTURES_LEN)
-  if(Kokkos_ENABLE_CUDA AND ESPRESSO_CMAKE_CUDA_ARCHITECTURES_LEN GREATER 1
-     AND NOT CMAKE_CUDA_COMPILER_ID STREQUAL "Clang")
-    message(
-      FATAL_ERROR
-        "Kokkos can only be built against a single CUDA architecture when using the nvcc_wrapper, got CMAKE_CUDA_ARCHITECTURES=${CMAKE_CUDA_ARCHITECTURES}"
-    )
-  endif()
   cmake_path(GET CUDA_cuda_driver_LIBRARY PARENT_PATH ESPRESSO_LIBCUDA_RPATH)
   cmake_path(GET CUDA_cudart_LIBRARY PARENT_PATH ESPRESSO_LIBCUDART_RPATH)
   macro(espresso_add_cuda_rpaths)
@@ -682,20 +665,6 @@ endif()
 # Libraries
 #
 
-if(ESPRESSO_BUILD_WITH_SHARED_MEMORY_PARALLELISM)
-  set(ESPRESSO_OPENMP_COMPONENTS CXX)
-  if(ESPRESSO_BUILD_WITH_CUDA AND NOT CMAKE_CUDA_COMPILER_ID STREQUAL NVHPC)
-    # FindOpenMP doesn't fully support NVHPC+CUDA as of CMake 4.3, see ticket:
-    # https://gitlab.kitware.com/cmake/cmake/-/work_items/23003
-    list(APPEND ESPRESSO_OPENMP_COMPONENTS CUDA)
-  endif()
-  # ESPResSo and Kokkos require some of the new features from OpenMP 5.0, but a
-  # version check cannot be enforced here, since GCC versions 12 to 15 report
-  # 4.5 support for the CXX component, and NVHPC versions <= 26.3 report 4.5
-  # support for the CUDA component
-  find_package(OpenMP REQUIRED COMPONENTS ${ESPRESSO_OPENMP_COMPONENTS})
-endif()
-
 set(ESPRESSO_OPENMP_COMPONENTS CXX)
 if(ESPRESSO_BUILD_WITH_CUDA AND NOT CMAKE_CUDA_COMPILER_ID STREQUAL NVHPC)
   # FindOpenMP doesn't fully support NVHPC+CUDA as of CMake 4.3, see ticket:
@@ -962,12 +931,6 @@ if(ESPRESSO_BUILD_WITH_VALGRIND)
   if(VALGRIND_FOUND)
     message(STATUS "Found valgrind: ${VALGRIND_INCLUDE_DIRS}")
   endif()
-endif()
-
-if(Kokkos_ENABLE_CUDA AND NOT CMAKE_CXX_COMPILER_ID STREQUAL Clang)
-  # allow constexpr __host__ function calls in __device__ functions
-  target_compile_options(espresso_kokkos_compiler_flags
-                         INTERFACE -expt-relaxed-constexpr)
 endif()
 
 #

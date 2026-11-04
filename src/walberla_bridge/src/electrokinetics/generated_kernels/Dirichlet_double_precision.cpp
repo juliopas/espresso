@@ -17,9 +17,7 @@
 //! \\author pystencils
 //======================================================================================================================
 
-// kernel generated with pystencils v1.4+1.ge851f4e, lbmpy v1.4+1.ge9efe34,
-// sympy v1.12.1, lbmpy_walberla/pystencils_walberla from waLBerla commit
-// 3247aa7395049ca5bfb69d34d55e45db19fa439c
+// kernel generated with pystencils v1.4+1.ge851f4e, lbmpy v1.4+1.ge9efe34, sympy v1.12.1, lbmpy_walberla/pystencils_walberla from waLBerla commit 3247aa7395049ca5bfb69d34d55e45db19fa439c
 
 #include "Dirichlet_double_precision.h"
 #include "core/DataTypes.h"
@@ -49,11 +47,7 @@ namespace pystencils {
 #endif
 // NOLINTBEGIN(readability-non-const-parameter*)
 namespace internal_74da74b67a122b7887d3d21c7ea5f414 {
-static FUNC_PREFIX void
-dirichlet_double_precision_boundary_Dirichlet_double_precision(
-    double *RESTRICT _data_field, uint8_t *RESTRICT const _data_indexVector,
-    int64_t const _stride_field_0, int64_t const _stride_field_1,
-    int64_t const _stride_field_2, int32_t indexVectorSize) {
+static FUNC_PREFIX void dirichlet_double_precision_boundary_Dirichlet_double_precision(double *RESTRICT _data_field, uint8_t *RESTRICT const _data_indexVector, int64_t const _stride_field_0, int64_t const _stride_field_1, int64_t const _stride_field_2, int32_t indexVectorSize) {
 #pragma omp parallel
   {
 #pragma omp for schedule(static)
@@ -62,9 +56,7 @@ dirichlet_double_precision_boundary_Dirichlet_double_precision(
       const int32_t y = *((int32_t *)(&_data_indexVector[24 * ctr_0 + 4]));
       const int32_t z = *((int32_t *)(&_data_indexVector[24 * ctr_0 + 8]));
 
-      _data_field[_stride_field_0 * x + _stride_field_1 * y +
-                  _stride_field_2 * z] =
-          *((double *)(&_data_indexVector[24 * ctr_0 + 16]));
+      _data_field[_stride_field_0 * x + _stride_field_1 * y + _stride_field_2 * z] = *((double *)(&_data_indexVector[24 * ctr_0 + 16]));
     }
   }
 }
@@ -79,8 +71,7 @@ dirichlet_double_precision_boundary_Dirichlet_double_precision(
 #pragma pop
 #endif
 
-void Dirichlet_double_precision::run_impl(IBlock *block,
-                                          IndexVectors::Type type) {
+void Dirichlet_double_precision::run_impl(IBlock *block, IndexVectors::Type type) {
   auto *indexVectors = block->getData<IndexVectors>(indexVectorID);
   int32_t indexVectorSize = int32_c(indexVectors->indexVector(type).size());
   if (indexVectorSize == 0)
@@ -97,10 +88,7 @@ void Dirichlet_double_precision::run_impl(IBlock *block,
   const int64_t _stride_field_0 = int64_t(field->xStride());
   const int64_t _stride_field_1 = int64_t(field->yStride());
   const int64_t _stride_field_2 = int64_t(field->zStride());
-  internal_74da74b67a122b7887d3d21c7ea5f414::
-      dirichlet_double_precision_boundary_Dirichlet_double_precision(
-          _data_field, _data_indexVector, _stride_field_0, _stride_field_1,
-          _stride_field_2, indexVectorSize);
+  internal_74da74b67a122b7887d3d21c7ea5f414::dirichlet_double_precision_boundary_Dirichlet_double_precision(_data_field, _data_indexVector, _stride_field_0, _stride_field_1, _stride_field_2, indexVectorSize);
 }
 
 void Dirichlet_double_precision::run(IBlock *block) {

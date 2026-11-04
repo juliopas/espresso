@@ -17,9 +17,7 @@
 //! \\author pystencils
 //======================================================================================================================
 
-// kernel generated with pystencils v1.4+1.ge851f4e, lbmpy v1.4+1.ge9efe34,
-// sympy v1.12.1, lbmpy_walberla/pystencils_walberla from waLBerla commit
-// 3247aa7395049ca5bfb69d34d55e45db19fa439c
+// kernel generated with pystencils v1.4+1.ge851f4e, lbmpy v1.4+1.ge9efe34, sympy v1.12.1, lbmpy_walberla/pystencils_walberla from waLBerla commit 3247aa7395049ca5bfb69d34d55e45db19fa439c
 
 #include "ReactionKernelIndexed_2_double_precision.h"
 #include "core/DataTypes.h"
@@ -49,14 +47,7 @@ namespace pystencils {
 #endif
 // NOLINTBEGIN(readability-non-const-parameter*)
 namespace internal_1955c52e82759b23ee69574de97d7a03 {
-static FUNC_PREFIX void
-reactionkernelindexed_2_double_precision_boundary_ReactionKernelIndexed_2_double_precision(
-    uint8_t *RESTRICT const _data_indexVector, double *RESTRICT _data_rho_0,
-    double *RESTRICT _data_rho_1, int64_t const _stride_rho_0_0,
-    int64_t const _stride_rho_0_1, int64_t const _stride_rho_0_2,
-    int64_t const _stride_rho_1_0, int64_t const _stride_rho_1_1,
-    int64_t const _stride_rho_1_2, int32_t indexVectorSize, double order_0,
-    double order_1, double rate_coefficient, double stoech_0, double stoech_1) {
+static FUNC_PREFIX void reactionkernelindexed_2_double_precision_boundary_ReactionKernelIndexed_2_double_precision(uint8_t *RESTRICT const _data_indexVector, double *RESTRICT _data_rho_0, double *RESTRICT _data_rho_1, int64_t const _stride_rho_0_0, int64_t const _stride_rho_0_1, int64_t const _stride_rho_0_2, int64_t const _stride_rho_1_0, int64_t const _stride_rho_1_1, int64_t const _stride_rho_1_2, int32_t indexVectorSize, double order_0, double order_1, double rate_coefficient, double stoech_0, double stoech_1) {
 #pragma omp parallel
   {
 #pragma omp for schedule(static)
@@ -65,18 +56,11 @@ reactionkernelindexed_2_double_precision_boundary_ReactionKernelIndexed_2_double
       const int32_t y = *((int32_t *)(&_data_indexVector[12 * ctr_0 + 4]));
       const int32_t z = *((int32_t *)(&_data_indexVector[12 * ctr_0 + 8]));
 
-      const double local_rho_0 =
-          _data_rho_0[_stride_rho_0_0 * x + _stride_rho_0_1 * y +
-                      _stride_rho_0_2 * z];
-      const double local_rho_1 =
-          _data_rho_1[_stride_rho_1_0 * x + _stride_rho_1_1 * y +
-                      _stride_rho_1_2 * z];
-      const double rate_factor = pow(local_rho_0, order_0) *
-                                 pow(local_rho_1, order_1) * rate_coefficient;
-      _data_rho_0[_stride_rho_0_0 * x + _stride_rho_0_1 * y +
-                  _stride_rho_0_2 * z] = local_rho_0 + rate_factor * stoech_0;
-      _data_rho_1[_stride_rho_1_0 * x + _stride_rho_1_1 * y +
-                  _stride_rho_1_2 * z] = local_rho_1 + rate_factor * stoech_1;
+      const double local_rho_0 = _data_rho_0[_stride_rho_0_0 * x + _stride_rho_0_1 * y + _stride_rho_0_2 * z];
+      const double local_rho_1 = _data_rho_1[_stride_rho_1_0 * x + _stride_rho_1_1 * y + _stride_rho_1_2 * z];
+      const double rate_factor = pow(local_rho_0, order_0) * pow(local_rho_1, order_1) * rate_coefficient;
+      _data_rho_0[_stride_rho_0_0 * x + _stride_rho_0_1 * y + _stride_rho_0_2 * z] = local_rho_0 + rate_factor * stoech_0;
+      _data_rho_1[_stride_rho_1_0 * x + _stride_rho_1_1 * y + _stride_rho_1_2 * z] = local_rho_1 + rate_factor * stoech_1;
     }
   }
 }
@@ -91,8 +75,7 @@ reactionkernelindexed_2_double_precision_boundary_ReactionKernelIndexed_2_double
 #pragma pop
 #endif
 
-void ReactionKernelIndexed_2_double_precision::run_impl(
-    IBlock *block, IndexVectors::Type type) {
+void ReactionKernelIndexed_2_double_precision::run_impl(IBlock *block, IndexVectors::Type type) {
   auto *indexVectors = block->uncheckedFastGetData<IndexVectors>(indexVectorID);
   int32_t indexVectorSize = int32_c(indexVectors->indexVector(type).size());
   if (indexVectorSize == 0)
@@ -120,12 +103,7 @@ void ReactionKernelIndexed_2_double_precision::run_impl(
   const int64_t _stride_rho_1_0 = int64_t(rho_1->xStride());
   const int64_t _stride_rho_1_1 = int64_t(rho_1->yStride());
   const int64_t _stride_rho_1_2 = int64_t(rho_1->zStride());
-  internal_1955c52e82759b23ee69574de97d7a03::
-      reactionkernelindexed_2_double_precision_boundary_ReactionKernelIndexed_2_double_precision(
-          _data_indexVector, _data_rho_0, _data_rho_1, _stride_rho_0_0,
-          _stride_rho_0_1, _stride_rho_0_2, _stride_rho_1_0, _stride_rho_1_1,
-          _stride_rho_1_2, indexVectorSize, order_0, order_1, rate_coefficient,
-          stoech_0, stoech_1);
+  internal_1955c52e82759b23ee69574de97d7a03::reactionkernelindexed_2_double_precision_boundary_ReactionKernelIndexed_2_double_precision(_data_indexVector, _data_rho_0, _data_rho_1, _stride_rho_0_0, _stride_rho_0_1, _stride_rho_0_2, _stride_rho_1_0, _stride_rho_1_1, _stride_rho_1_2, indexVectorSize, order_0, order_1, rate_coefficient, stoech_0, stoech_1);
 }
 
 void ReactionKernelIndexed_2_double_precision::run(IBlock *block) {

@@ -25,6 +25,7 @@
 
 #include "Particle.hpp"
 #include "cell_system/CellStructure.hpp"
+#include "cell_system/for_each_particle.hpp"
 #include "constraints/Constraints.hpp"
 #include "constraints/HomogeneousMagneticField.hpp"
 #include "magnetostatics/magnetodynamics.hpp"

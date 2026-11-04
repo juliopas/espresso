@@ -59,6 +59,8 @@ espresso_unit_test(SRC Particle_serialization_test.cpp DEPENDS espresso::utils
                    Boost::serialization)
 espresso_unit_test(SRC rotation_test.cpp DEPENDS espresso::utils espresso::core
                    Kokkos::kokkos)
+espresso_unit_test(SRC magnetodynamics_test.cpp DEPENDS espresso::utils
+                   espresso::core Kokkos::kokkos)
 espresso_unit_test(SRC field_coupling_couplings_test.cpp DEPENDS
                    espresso::utils)
 espresso_unit_test(SRC field_coupling_fields_test.cpp DEPENDS espresso::utils)

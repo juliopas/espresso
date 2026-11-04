@@ -1241,6 +1241,7 @@ public:
               Vector3<uint_t>(bci.xSize(), bci.ySize(), bci.zSize()));
         }
       };
+
       vtk_obj.addBeforeFunction(std::move(before_function));
       vtk_obj.addCellDataWriter(density_writer);
     }

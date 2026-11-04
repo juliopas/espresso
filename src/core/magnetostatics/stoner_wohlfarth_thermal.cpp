@@ -22,13 +22,7 @@
 #ifdef ESPRESSO_THERMAL_STONER_WOHLFARTH
 
 #include "Particle.hpp"
-#include "cell_system/CellStructure.hpp"
-#include "cell_system/for_each_particle.hpp"
-#include "cells.hpp"
-#include "constraints/Constraints.hpp"
-#include "constraints/HomogeneousMagneticField.hpp"
-#include "errorhandling.hpp"
-#include "random.hpp"
+#include "magnetostatics/magnetodynamics.hpp"
 #include "rotation.hpp"
 
 #include <utils/Vector.hpp>

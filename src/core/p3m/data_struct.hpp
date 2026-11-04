@@ -30,8 +30,6 @@
 
 #include <utils/device_qualifier.hpp>
 
-#include <utils/device_qualifier.hpp>
-
 #include <array>
 #include <cassert>
 #include <memory>

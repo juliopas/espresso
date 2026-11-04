@@ -146,7 +146,6 @@ struct ForcesKernel {
     p3m = get_toplevel_p3m_solver(coulomb_);
 #endif
   }
-#endif
 
 #ifdef ESPRESSO_NPT
   ESPRESSO_ATTR_ALWAYS_INLINE KOKKOS_INLINE_FUNCTION bool npt_active() const {
@@ -175,142 +174,191 @@ struct ForcesKernel {
     ParticleForce pf{};
 
     // Determine which data needs to be loaded based on active algorithms
-    if (dpd_active(ia_params, thermostat.thermo_switch)) {
-      auto const pos1 = aosoa.get_vector_at(aosoa.position, i);
-      auto const pos2 = aosoa.get_vector_at(aosoa.position, j);
-      auto const vel1 = aosoa.get_vector_at(aosoa.velocity, i);
-      auto const vel2 = aosoa.get_vector_at(aosoa.velocity, j);
-      auto const force =
-          dpd_pair_force(pos1, vel1, aosoa.id(i), pos2, vel2, aosoa.id(j),
-                         *thermostat.dpd, box_geo, ia_params, d, dist, dist_sq);
-      pf += force;
+#if defined(ESPRESSO_EXCLUSIONS) or defined(ESPRESSO_THOLE)
+    bool need_particle_pointers = false;
+#ifdef ESPRESSO_EXCLUSIONS
+    need_particle_pointers |= aosoa.has_exclusion(i) or aosoa.has_exclusion(j);
+#endif
+#ifdef ESPRESSO_THOLE
+    need_particle_pointers |=
+        thole_active(ia_params, coulomb_kernel != nullptr);
+#endif
+
+    Particle const *p1_ptr = nullptr;
+    Particle const *p2_ptr = nullptr;
+    if (need_particle_pointers) {
+      p1_ptr = unique_particles.at(i);
+      p2_ptr = unique_particles.at(j);
     }
+#endif
+
+    /***********************************************/
+    /* non-bonded pair potentials                  */
+    /***********************************************/
+
+    if (dist <= ia_params.max_cut) {
+#ifdef ESPRESSO_EXCLUSIONS
+      bool skip_non_bonded = false;
+      if (aosoa.has_exclusion(i) or aosoa.has_exclusion(j)) {
+        skip_non_bonded = not do_nonbonded(*p1_ptr, *p2_ptr);
+      }
+#else
+      constexpr bool skip_non_bonded = false;
+#endif
+      if (not skip_non_bonded) {
+        pf.f += calc_central_radial_force(ia_params, d, dist);
+
+        // Only call Thole force kernel if active
+#ifdef ESPRESSO_THOLE
+        if (thole_active(ia_params, coulomb_kernel != nullptr)) {
+          pf.f += thole_pair_force(*p1_ptr, *p2_ptr, ia_params, d, dist,
+                                   bonded_ias, coulomb_kernel);
+        }
+#endif
+        // Only call Gay-Berne force kernel if active
+#ifdef ESPRESSO_GAY_BERNE
+        if (gay_berne_active(dist, ia_params)) {
+          auto const dir1 = aosoa.get_vector_at(aosoa.director, i);
+          auto const dir2 = aosoa.get_vector_at(aosoa.director, j);
+          pf += gb_pair_force(dir1, dir2, ia_params, d, dist);
+        }
+#endif
+#ifdef ESPRESSO_DPD
+        if (dpd_active(ia_params, thermostat.thermo_switch)) {
+          auto const pos1 = aosoa.get_vector_at(aosoa.position, i);
+          auto const pos2 = aosoa.get_vector_at(aosoa.position, j);
+          auto const vel1 = aosoa.get_vector_at(aosoa.velocity, i);
+          auto const vel2 = aosoa.get_vector_at(aosoa.velocity, j);
+          auto const force = dpd_pair_force(
+              pos1, vel1, aosoa.id(i), pos2, vel2, aosoa.id(j), *thermostat.dpd,
+              box_geo, ia_params, d, dist, dist_sq);
+          pf += force;
+        }
 #endif // ESPRESSO_DPD
 
-  } // not skip_non_bonded
-} // not dist > ia_params.max_cut
+      } // not skip_non_bonded
+    } // not dist > ia_params.max_cut
 
-/*********************************************************************/
-/* everything before this contributes to the virial pressure in NpT  */
-/* via d (x) pf.f; electrostatic and dipolar real-space contributions */
-/* are added in explicitly below instead: Coulomb reuses the pair    */
-/* energy as a virial proxy, dipoles compute d . F directly (see     */
-/* rationale below)                                                 */
-/*********************************************************************/
+    /*********************************************************************/
+    /* everything before this contributes to the virial pressure in NpT  */
+    /* via d (x) pf.f; electrostatic and dipolar real-space contributions */
+    /* are added in explicitly below instead: Coulomb reuses the pair    */
+    /* energy as a virial proxy, dipoles compute d . F directly (see     */
+    /* rationale below)                                                 */
+    /*********************************************************************/
 #ifdef ESPRESSO_NPT
-Utils::Vector3d virial{};
-if (npt_active()) {
-  virial = hadamard_product(pf.f, d);
-}
+    Utils::Vector3d virial{};
+    if (npt_active()) {
+      virial = hadamard_product(pf.f, d);
+    }
 #endif // ESPRESSO_NPT
 
 #ifdef ESPRESSO_ELECTROSTATICS
-Utils::Vector3d f1_asym{};
-Utils::Vector3d f2_asym{};
-// real-space electrostatic charge-charge interaction
-if (coulomb_kernel != nullptr) {
-  if ((aosoa.charge(i) != 0.) and (aosoa.charge(j) != 0.)) {
-    auto const q1q2 = aosoa.charge(i) * aosoa.charge(j);
-    pf.f += coulomb_pair_force(q1q2, d, dist, coulomb_kernel
+    Utils::Vector3d f1_asym{};
+    Utils::Vector3d f2_asym{};
+    // real-space electrostatic charge-charge interaction
+    if (coulomb_kernel != nullptr) {
+      if ((aosoa.charge(i) != 0.) and (aosoa.charge(j) != 0.)) {
+        auto const q1q2 = aosoa.charge(i) * aosoa.charge(j);
+        pf.f += coulomb_pair_force(q1q2, d, dist, coulomb_kernel
 #ifdef ESPRESSO_P3M
-                               ,
-                               p3m
+                                   ,
+                                   p3m
 #endif
-    );
-    if (elc_kernel) {
-      auto const pos1 = aosoa.get_vector_at(aosoa.position, i);
-      auto const pos2 = aosoa.get_vector_at(aosoa.position, j);
-      (*elc_kernel)(pos1, pos2, f1_asym, f2_asym, q1q2);
-    }
+        );
+        if (elc_kernel) {
+          auto const pos1 = aosoa.get_vector_at(aosoa.position, i);
+          auto const pos2 = aosoa.get_vector_at(aosoa.position, j);
+          (*elc_kernel)(pos1, pos2, f1_asym, f2_asym, q1q2);
+        }
 #ifdef ESPRESSO_NPT
-    if (npt_active()) {
-      auto const pos1 = aosoa.get_vector_at(aosoa.position, i);
-      auto const pos2 = aosoa.get_vector_at(aosoa.position, j);
-      virial[0] += (*coulomb_u_kernel)(pos1, pos2, q1q2, d, dist);
-    }
+        if (npt_active()) {
+          auto const pos1 = aosoa.get_vector_at(aosoa.position, i);
+          auto const pos2 = aosoa.get_vector_at(aosoa.position, j);
+          virial[0] += (*coulomb_u_kernel)(pos1, pos2, q1q2, d, dist);
+        }
 #endif // ESPRESSO_NPT
-  }
-}
+      }
+    }
 #endif // ESPRESSO_ELECTROSTATICS
 
 #ifdef ESPRESSO_DIPOLES
-if (dipoles_kernel != nullptr) {
-  auto const d1d2 = aosoa.dipm(i) * aosoa.dipm(j);
-  if (d1d2 != 0.) {
-    auto const dir1 = aosoa.get_vector_at(aosoa.director, i);
-    auto const dir2 = aosoa.get_vector_at(aosoa.director, j);
+    if (dipoles_kernel != nullptr) {
+      auto const d1d2 = aosoa.dipm(i) * aosoa.dipm(j);
+      if (d1d2 != 0.) {
+        auto const dir1 = aosoa.get_vector_at(aosoa.director, i);
+        auto const dir2 = aosoa.get_vector_at(aosoa.director, j);
 #ifdef ESPRESSO_DIPOLE_FIELD_TRACKING
-    Utils::Vector3d dip_fld_i{};
-    Utils::Vector3d dip_fld_j{};
+        Utils::Vector3d dip_fld_i{};
+        Utils::Vector3d dip_fld_j{};
 #endif
-    auto const dip_pf =
-        (*dipoles_kernel)(d1d2, aosoa.dipm(i) * dir1, aosoa.dipm(j) * dir2,
+        auto const dip_pf =
+            (*dipoles_kernel)(d1d2, aosoa.dipm(i) * dir1, aosoa.dipm(j) * dir2,
 #ifdef ESPRESSO_DIPOLE_FIELD_TRACKING
-                          dip_fld_i, dip_fld_j,
+                              dip_fld_i, dip_fld_j,
 #endif
-                          d, dist, dist_sq);
+                              d, dist, dist_sq);
 #ifdef ESPRESSO_DIPOLE_FIELD_TRACKING
-    auto access_dip_fld = local_dip_fld.access();
-    access_dip_fld(i, 0) += dip_fld_i[0];
-    access_dip_fld(i, 1) += dip_fld_i[1];
-    access_dip_fld(i, 2) += dip_fld_i[2];
-    access_dip_fld(j, 0) += dip_fld_j[0];
-    access_dip_fld(j, 1) += dip_fld_j[1];
-    access_dip_fld(j, 2) += dip_fld_j[2];
+        auto access_dip_fld = local_dip_fld.access();
+        access_dip_fld(i, 0) += dip_fld_i[0];
+        access_dip_fld(i, 1) += dip_fld_i[1];
+        access_dip_fld(i, 2) += dip_fld_i[2];
+        access_dip_fld(j, 0) += dip_fld_j[0];
+        access_dip_fld(j, 1) += dip_fld_j[1];
+        access_dip_fld(j, 2) += dip_fld_j[2];
+#endif
+#ifdef ESPRESSO_NPT
+        if (npt_active()) {
+          // d . F = -n * U for a homogeneous potential of degree n
+          // (Euler's theorem, independent of centrality); n=-3 here vs
+          // n=-1 for Coulomb. Ewald screening makes that only
+          // approximate, and for dipoles the approximation measurably
+          // fails NpT pressure consistency (see test_pressure_with_dp3m),
+          // so d . F is computed explicitly here instead.
+          virial[0] += d * dip_pf.f;
+        }
+#endif // ESPRESSO_NPT
+        pf += dip_pf;
+      }
+    }
+#endif // ESPRESSO_DIPOLES
+
+    auto opf = calc_opposing_force(pf, d);
+#ifdef ESPRESSO_ELECTROSTATICS
+    pf.f += f1_asym;
+    opf.f += f2_asym;
+#endif // ESPRESSO_ELECTROSTATICS
+
+    auto access_force = local_force.access();
+
+    access_force(i, 0) += pf.f[0];
+    access_force(i, 1) += pf.f[1];
+    access_force(i, 2) += pf.f[2];
+#ifdef ESPRESSO_ROTATION
+    auto access_torque = local_torque.access();
+    access_torque(i, 0) += pf.torque[0];
+    access_torque(i, 1) += pf.torque[1];
+    access_torque(i, 2) += pf.torque[2];
+#endif
+
+    access_force(j, 0) += opf.f[0];
+    access_force(j, 1) += opf.f[1];
+    access_force(j, 2) += opf.f[2];
+#ifdef ESPRESSO_ROTATION
+    access_torque(j, 0) += opf.torque[0];
+    access_torque(j, 1) += opf.torque[1];
+    access_torque(j, 2) += opf.torque[2];
 #endif
 #ifdef ESPRESSO_NPT
     if (npt_active()) {
-      // d . F = -n * U for a homogeneous potential of degree n
-      // (Euler's theorem, independent of centrality); n=-3 here vs
-      // n=-1 for Coulomb. Ewald screening makes that only
-      // approximate, and for dipoles the approximation measurably
-      // fails NpT pressure consistency (see test_pressure_with_dp3m),
-      // so d . F is computed explicitly here instead.
-      virial[0] += d * dip_pf.f;
+      auto access_virial = local_virial.access();
+      access_virial(0) += virial[0];
+      access_virial(1) += virial[1];
+      access_virial(2) += virial[2];
     }
-#endif // ESPRESSO_NPT
-    pf += dip_pf;
+#endif
   }
-}
-#endif // ESPRESSO_DIPOLES
-
-auto opf = calc_opposing_force(pf, d);
-#ifdef ESPRESSO_ELECTROSTATICS
-pf.f += f1_asym;
-opf.f += f2_asym;
-#endif // ESPRESSO_ELECTROSTATICS
-
-auto access_force = local_force.access();
-
-access_force(i, 0) += pf.f[0];
-access_force(i, 1) += pf.f[1];
-access_force(i, 2) += pf.f[2];
-#ifdef ESPRESSO_ROTATION
-auto access_torque = local_torque.access();
-access_torque(i, 0) += pf.torque[0];
-access_torque(i, 1) += pf.torque[1];
-access_torque(i, 2) += pf.torque[2];
-#endif
-
-access_force(j, 0) += opf.f[0];
-access_force(j, 1) += opf.f[1];
-access_force(j, 2) += opf.f[2];
-#ifdef ESPRESSO_ROTATION
-access_torque(j, 0) += opf.torque[0];
-access_torque(j, 1) += opf.torque[1];
-access_torque(j, 2) += opf.torque[2];
-#endif
-#ifdef ESPRESSO_NPT
-if (npt_active()) {
-  auto access_virial = local_virial.access();
-  access_virial(0) += virial[0];
-  access_virial(1) += virial[1];
-  access_virial(2) += virial[2];
-}
-#endif
-}
-}
-;
+};
 
 /** @brief Pair potentials fully handled by @ref SpecializedForcesKernel,
  *  i.e. exactly the central-radial family dispatched through
