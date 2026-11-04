@@ -64,14 +64,17 @@ class Test(ut.TestCase):
     def image_indices(periodicity, n_replicas):
         """
         Image set of the core: ``get_n_cut()`` returns
-        ``ncut = n_replicas * periodicity`` and ``make_image_shifts()``
-        visits the full index cube ``[-ncut, ncut]``.
+        ``ncut = n_replicas * periodicity`` and ``for_each_image()`` visits
+        the index cube ``[-ncut, ncut]`` clipped by the ball
+        ``nx^2 + ny^2 + nz^2 <= |ncut|^2``.
         """
         ncut = n_replicas * np.array(periodicity, dtype=int)
+        ncut2 = int(ncut @ ncut)
         return [(nx, ny, nz)
                 for nx in range(-ncut[0], ncut[0] + 1)
                 for ny in range(-ncut[1], ncut[1] + 1)
-                for nz in range(-ncut[2], ncut[2] + 1)]
+                for nz in range(-ncut[2], ncut[2] + 1)
+                if nx**2 + ny**2 + nz**2 <= ncut2]
 
     @staticmethod
     def pair_potential(d, m1, m2):

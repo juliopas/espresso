@@ -140,13 +140,7 @@ endif()
 
 if(ESPRESSO_BUILD_WITH_FFTW)
   espresso_unit_test_executable(
-    NAME
-    p3m_test_matrix
-    SRC
-    p3m_test.cpp
-    DEPENDS
-    espresso::core
-    Boost::mpi
+    NAME p3m_test_matrix SRC p3m_test.cpp DEPENDS espresso::core Boost::mpi
     MPI::MPI_CXX
     $<$<BOOL:${ESPRESSO_BUILD_WITH_FFTW}>:espresso::p3m::compiler_flags>
     $<$<BOOL:${ESPRESSO_BUILD_WITH_FFTW}>:Heffte::Heffte> Cabana::Core

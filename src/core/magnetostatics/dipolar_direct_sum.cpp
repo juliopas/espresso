@@ -114,12 +114,12 @@ static auto get_n_cut(BoxGeometry const &box_geo, int n_replicas) {
 }
 
 /**
- * Real-space image shifts n x box_l over the full index cube
- * [-ncut, ncut]. Index 0 is the primary (zero) shift so self-interaction
- * loops start at index 1.
+ * Real-space image shifts n x box_l inside the |ncut| sphere. Index 0 is the
+ * primary (zero) shift so self-interaction loops start at index 1.
  */
 static std::vector<Utils::Vector3d>
 make_image_shifts(Utils::Vector3i const &ncut, Utils::Vector3d const &box_l) {
+  auto const ncut2 = ncut.norm2();
   std::vector<Utils::Vector3d> shifts;
   shifts.push_back({0., 0., 0.});
   for (int nx = -ncut[0]; nx <= ncut[0]; ++nx)
@@ -127,7 +127,8 @@ make_image_shifts(Utils::Vector3i const &ncut, Utils::Vector3d const &box_l) {
       for (int nz = -ncut[2]; nz <= ncut[2]; ++nz) {
         if (nx == 0 && ny == 0 && nz == 0)
           continue;
-        shifts.push_back({nx * box_l[0], ny * box_l[1], nz * box_l[2]});
+        if (nx * nx + ny * ny + nz * nz <= ncut2)
+          shifts.push_back({nx * box_l[0], ny * box_l[1], nz * box_l[2]});
       }
   return shifts;
 }
@@ -201,7 +202,7 @@ void DipolarDirectSum::add_long_range_forces_cpu() const {
    * partner-j contributions go through the ScatterView with a per-lane
    * scatter. */
   Kokkos::RangePolicy<execution_space, Kokkos::Schedule<Kokkos::Dynamic>>
-      policy_local(std::size_t{0}, n_local);
+  policy_local(std::size_t{0}, n_local);
   policy_local.set_chunk_size(64);
   Kokkos::parallel_for(
       "dds_local_pairs", policy_local, [=](std::size_t const i) {
@@ -301,10 +302,9 @@ void DipolarDirectSum::add_long_range_forces_cpu() const {
   Kokkos::fence();
 
 #ifdef ESPRESSO_NPT
-  // The trace of the virial comes from the pressure tensor (see
-  // long_range_pressure()), the route shared with DipolarP3M. For the
-  // direct sum it also equals 3x the energy, since the pair potential is
-  // homogeneous of degree -3 (tested in dipolar_direct_summation_replicas.py).
+  // As with DipolarP3M, the energy is not a valid
+  // substitute for the virial trace for dipole-dipole interactions, so the
+  // pressure tensor (see long_range_pressure()) is reused instead.
   if (system.has_npt_enabled()) {
     auto const pressure_tensor = long_range_pressure();
     get_system().npt_add_virial_contribution(
@@ -366,7 +366,7 @@ double DipolarDirectSum::long_range_energy_cpu() const {
    * gathered data while the remote data is still in flight. */
   double uA = 0.;
   Kokkos::RangePolicy<execution_space, Kokkos::Schedule<Kokkos::Dynamic>>
-      policy_local(std::size_t{0}, n_local);
+  policy_local(std::size_t{0}, n_local);
   policy_local.set_chunk_size(64);
   Kokkos::parallel_reduce(
       "dds_energy_local", policy_local,
@@ -476,7 +476,7 @@ Utils::Vector9d DipolarDirectSum::long_range_pressure() const {
    * j in (gi, offset + n_local). Computed while remote data is in flight. */
   Utils::Vector9d pA{};
   Kokkos::RangePolicy<execution_space, Kokkos::Schedule<Kokkos::Dynamic>>
-      policy_local(std::size_t{0}, n_local);
+  policy_local(std::size_t{0}, n_local);
   policy_local.set_chunk_size(64);
   auto const join_op = [](Utils::Vector9d &acc, Utils::Vector9d const &val) {
     acc += val;
