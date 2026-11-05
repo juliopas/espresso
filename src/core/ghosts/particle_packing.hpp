@@ -188,6 +188,13 @@ void add_rattle(CommBuf &buf, std::span<ParticleList *const> cells);
 void add_dip_fld(CommBuf &buf, std::span<ParticleList *const> cells);
 #endif
 
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+/**
+ * @brief Add bond dispersion sums from a communication buffer to particles.
+ */
+void add_bond_dispersion(CommBuf &buf, std::span<ParticleList *const> cells);
+#endif
+
 /**
  * @brief Copy particle data from src to dst applying a ghost shift.
  *

@@ -793,6 +793,7 @@ class BONDED_IA(enum.IntEnum):
     OIF_GLOBAL_FORCES = enum.auto()
     OIF_LOCAL_FORCES = enum.auto()
     VIRTUAL_BOND = enum.auto()
+    DISPERSIVE_HARMONIC = enum.auto()
 
 
 class BondedInteraction(ScriptInterfaceHelper, metaclass=abc.ABCMeta):
@@ -810,14 +811,15 @@ class BondedInteraction(ScriptInterfaceHelper, metaclass=abc.ABCMeta):
     _so_creation_policy = "GLOBAL"
 
     def __init__(self, **kwargs):
-        feature = self.__class__.__dict__.get("_so_feature")
-        if feature is not None:
-            code_features.assert_features(feature)
         if "sip" in kwargs:
             super().__init__(**kwargs)
             self._ctor_params = self.get_params()
             self._bond_id = -1
         else:
+            # a wrapper of a bond the core already holds (sip) needs no check
+            feature = self.__class__.__dict__.get("_so_feature")
+            if feature is not None:
+                code_features.assert_features(feature)
             params = self.get_default_params()
             params.update(kwargs)
             super().__init__(**params)
@@ -1442,6 +1444,45 @@ class QuarticBond(BondedInteraction):
 
         """
         return {}
+
+
+@script_interface_register
+class DispersiveHarmonicBond(BondedInteraction):
+
+    """
+    Dispersive harmonic bond (Kot and Nagahashi; DOI:10.1007/s00371-015-1194-8).
+
+    Used to create spring networks with controlled poisson ratio.
+
+    A harmonic bond whose tension also depends on the strain of the
+    neighbouring bonds. For each particle i, the mean
+    :math:`a_i = \\langle q k r_0 (l_b - r_0) \\rangle_{b \\ni i}` is
+    taken over all dispersive bonds b of i; the bond between i and j then
+    carries the extra tension :math:`(a_i + a_j) / r_0`. The energy is that
+    of the harmonic spring only.
+
+    Parameters
+    ----------
+    k : :obj:`float`
+        Magnitude of the bond interaction.
+    r_0 : :obj:`float`
+        Equilibrium bond length, must be positive.
+    q : :obj:`float`
+        Dispersion coefficient.
+    r_cut : :obj:`float`, optional
+        Maximum distance beyond which the bond is considered broken.
+
+    """
+
+    _so_name = "Interactions::DispersiveHarmonicBond"
+    _so_feature = "DISPERSIVE_BONDS"
+    _type_number = BONDED_IA.DISPERSIVE_HARMONIC
+
+    def get_default_params(self):
+        """Gets default values of optional parameters.
+
+        """
+        return {"r_cut": 0.}
 
 
 @script_interface_register

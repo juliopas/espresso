@@ -25,6 +25,7 @@ add_library(
   bonds.cpp
   cells.cpp
   communication.cpp
+  dispersive_bonds.cpp
   dpd.cpp
   energy.cpp
   errorhandling.cpp

@@ -188,6 +188,29 @@ private:
   }
 };
 
+class DispersiveHarmonicBond
+    : public BondedInteractionImpl<::DispersiveHarmonicBond> {
+public:
+  DispersiveHarmonicBond() {
+    add_parameters({
+        {"k", AutoParameter::read_only, [this]() { return get_struct().k; }},
+        {"r_0", AutoParameter::read_only, [this]() { return get_struct().r; }},
+        {"r_cut", AutoParameter::read_only,
+         [this]() { return get_struct().r_cut; }},
+        {"q", AutoParameter::read_only, [this]() { return get_struct().q; }},
+    });
+  }
+
+private:
+  void construct_bond(VariantMap const &params) override {
+    m_bonded_ia =
+        std::make_shared<::Bonded_IA_Parameters>(CoreBondedInteraction(
+            get_value<double>(params, "k"), get_value<double>(params, "r_0"),
+            get_value<double>(params, "r_cut"),
+            get_value<double>(params, "q")));
+  }
+};
+
 class BondedCoulomb : public BondedInteractionImpl<::BondedCoulomb> {
 public:
   BondedCoulomb() {

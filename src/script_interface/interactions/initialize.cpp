@@ -51,6 +51,8 @@ void initialize(Utils::Factory<ObjectHandle> *om) {
   om->register_new<OifGlobalForcesBond>("Interactions::OifGlobalForcesBond");
   om->register_new<OifLocalForcesBond>("Interactions::OifLocalForcesBond");
   om->register_new<VirtualBond>("Interactions::VirtualBond");
+  om->register_new<DispersiveHarmonicBond>(
+      "Interactions::DispersiveHarmonicBond");
 
   om->register_new<NonBondedInteractions>(
       "Interactions::NonBondedInteractions");

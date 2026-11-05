@@ -52,6 +52,9 @@ void BondedInteractionsMap::on_ia_change() {
 #ifdef ESPRESSO_BOND_CONSTRAINT
   n_rigid_bonds = 0;
 #endif
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+  n_dispersive_bonds = 0;
+#endif
   for (auto const &bond : std::views::elements<1>(*this)) {
     if (std::holds_alternative<ThermalizedBond>(*bond)) {
       ++n_thermalized_bonds;
@@ -59,6 +62,11 @@ void BondedInteractionsMap::on_ia_change() {
 #ifdef ESPRESSO_BOND_CONSTRAINT
     if (std::holds_alternative<RigidBond>(*bond)) {
       ++n_rigid_bonds;
+    }
+#endif
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+    if (std::holds_alternative<DispersiveHarmonicBond>(*bond)) {
+      ++n_dispersive_bonds;
     }
 #endif
   }
@@ -95,6 +103,11 @@ void BondedInteractionsMap::deactivate_bond(mapped_type const &ptr) {
 #ifdef ESPRESSO_BOND_CONSTRAINT
   if (std::get_if<RigidBond>(ptr.get())) {
     n_rigid_bonds = -1;
+  }
+#endif
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+  if (std::get_if<DispersiveHarmonicBond>(ptr.get())) {
+    n_dispersive_bonds = -1;
   }
 #endif
 }

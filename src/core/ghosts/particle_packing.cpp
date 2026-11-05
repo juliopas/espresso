@@ -203,6 +203,18 @@ serialize_and_reduce(Archive &ar, Particle &p, unsigned int data_parts,
     }
   }
 #endif
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+  if (data_parts & GHOSTTRANS_BOND_DISPERSION) {
+    if (policy == ReductionPolicy::UPDATE and
+        direction == SerializationDirection::LOAD) {
+      ParticleBondDispersion bond_dispersion;
+      ar & bond_dispersion;
+      p.bond_dispersion() += bond_dispersion;
+    } else {
+      ar & p.bond_dispersion();
+    }
+  }
+#endif
 }
 
 static void prepare_ghost_cell(ParticleList *cell, std::size_t size) {
@@ -353,6 +365,19 @@ void add_dip_fld(CommBuf &buf, std::span<ParticleList *const> cells) {
       Utils::Vector3d dip_fld;
       archiver >> dip_fld;
       part.dip_fld() += dip_fld;
+    }
+  }
+}
+#endif
+
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+void add_bond_dispersion(CommBuf &buf, std::span<ParticleList *const> cells) {
+  auto archiver = Utils::MemcpyIArchive{buf.make_span()};
+  for (auto &part_list : cells) {
+    for (Particle &part : *part_list) {
+      ParticleBondDispersion bond_dispersion;
+      archiver >> bond_dispersion;
+      part.bond_dispersion() += bond_dispersion;
     }
   }
 }

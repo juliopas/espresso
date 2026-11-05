@@ -59,4 +59,8 @@ enum : unsigned {
   /// transfer dipole field tracking data
   GHOSTTRANS_DIPFLD = 1024u,
 #endif
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+  /// transfer \ref ParticleBondDispersion
+  GHOSTTRANS_BOND_DISPERSION = 2048u,
+#endif
 };

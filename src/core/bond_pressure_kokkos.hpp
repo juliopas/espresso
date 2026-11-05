@@ -24,6 +24,7 @@
 #include "aosoa_pack.hpp"
 #include "bond_error.hpp"
 #include "cell_system/LocalBondState.hpp"
+#include "dispersive_bonds.hpp"
 #include "pressure_cabana.hpp"
 #include "pressure_inline.hpp"
 
@@ -44,6 +45,9 @@ struct BondsPressureKernelData {
   Kokkos::View<double **, Kokkos::LayoutRight, execution_space> local_pressure;
   PressureBinLayout layout;
   CellStructure::AoSoA_pack const &aosoa;
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+  BondDispersionState::MeanType bond_dispersion;
+#endif
 };
 
 struct PairBondsPressureKernel {
@@ -79,15 +83,27 @@ struct PairBondsPressureKernel {
     auto const pos1 = aosoa.get_vector_at(aosoa.position, i);
     auto const pos2 = aosoa.get_vector_at(aosoa.position, j);
 
-    std::optional<Utils::Matrix<double, 3, 3>> pressure =
-        calc_bonded_virial_pressure_tensor(iaparams, pos1, pos2, box_geo,
-                                           coulomb_f_kernel,
-#ifdef ESPRESSO_ELECTROSTATICS
-                                           aosoa.charge(i) * aosoa.charge(j)
-#else
-                                           0.0
+    std::optional<Utils::Matrix<double, 3, 3>> pressure;
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+    if (auto const *iap = std::get_if<DispersiveHarmonicBond>(&iaparams)) {
+      auto const dx = box_geo.get_mi_vector(pos1, pos2);
+      auto const pair_force =
+          iap->force(dx, data.bond_dispersion(i) + data.bond_dispersion(j));
+      if (pair_force) {
+        pressure = Utils::tensor_product(dx, *pair_force);
+      }
+    } else
 #endif
-        );
+    {
+      pressure = calc_bonded_virial_pressure_tensor(
+          iaparams, pos1, pos2, box_geo, coulomb_f_kernel,
+#ifdef ESPRESSO_ELECTROSTATICS
+          aosoa.charge(i) * aosoa.charge(j)
+#else
+          0.0
+#endif
+      );
+    }
 
     if (pressure) {
       auto const flat = Utils::flatten(*pressure);

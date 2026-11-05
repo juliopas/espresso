@@ -24,6 +24,7 @@
 #define EXTERNAL_FORCES
 #define THERMOSTAT_PER_PARTICLE
 #define BOND_CONSTRAINT
+#define DISPERSIVE_BONDS
 #define NPT
 #define DPD
 

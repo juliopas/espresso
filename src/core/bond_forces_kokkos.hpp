@@ -23,6 +23,7 @@
 
 #include "aosoa_pack.hpp"
 #include "cell_system/LocalBondState.hpp"
+#include "dispersive_bonds.hpp"
 #include "forces_inline.hpp"
 
 #include <utils/Vector.hpp>
@@ -44,6 +45,9 @@ struct BondsKernelData {
 #endif
   CellStructure::AoSoA_pack const &aosoa;
   bool const has_breakage_specs;
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+  BondDispersionState::MeanType bond_dispersion;
+#endif
 };
 
 struct PairBondsKernel {
@@ -110,14 +114,23 @@ struct PairBondsKernel {
       return;
     }
 
-    auto const result =
-        calc_bond_pair_force(iaparams, dx,
-#ifdef ESPRESSO_ELECTROSTATICS
-                             aosoa.charge(i) * aosoa.charge(j), coulomb_kernel
-#else
-                             0.0, nullptr
+    std::optional<Utils::Vector3d> result;
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+    if (auto const *iap = std::get_if<DispersiveHarmonicBond>(&iaparams)) {
+      result =
+          iap->force(dx, data.bond_dispersion(i) + data.bond_dispersion(j));
+    } else
 #endif
-        );
+    {
+      result =
+          calc_bond_pair_force(iaparams, dx,
+#ifdef ESPRESSO_ELECTROSTATICS
+                               aosoa.charge(i) * aosoa.charge(j), coulomb_kernel
+#else
+                               0.0, nullptr
+#endif
+          );
+    }
 
     if (result) {
       auto const f = result.value();

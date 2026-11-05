@@ -27,6 +27,7 @@
 #include "bond_pressure_kokkos.hpp"
 #include "bonded_interactions/bonded_interaction_data.hpp"
 #include "cell_system/CellStructure.hpp"
+#include "dispersive_bonds.hpp"
 #include "electrostatics/coulomb.hpp"
 #include "integrators/Propagation.hpp"
 #include "kokkos_helpers.hpp"
@@ -105,6 +106,10 @@ Observable_stat const &System::calculate_pressure() {
                              inactive_cutoff};
   };
   update_verlet_state(*this, inactive_cutoff);
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+  // must precede BondsPressureKernelData, which copies the view
+  calc_bond_dispersion(*this);
+#endif
 
   PressureBinLayout layout{
       static_cast<std::size_t>(bonded_ias->get_next_key()),
@@ -143,8 +148,16 @@ Observable_stat const &System::calculate_pressure() {
                                thermostat->thermo_switch};
 
   auto &bs = cell_structure->bond_state();
-  BondsPressureKernelData bonds_p_data{*bonded_ias, *box_geo, local_pressure,
-                                       layout, cell_structure->get_aosoa()};
+  BondsPressureKernelData bonds_p_data{*bonded_ias,
+                                       *box_geo,
+                                       local_pressure,
+                                       layout,
+                                       cell_structure->get_aosoa()
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+                                           ,
+                                       cell_structure->bond_dispersion_state().a
+#endif
+  };
   PairBondsPressureKernel pair_bp_kernel{
       bonds_p_data, bs.pair_list, bs.pair_ids, get_ptr(coulomb_force_kernel)};
   AngleBondsPressureKernel angle_bp_kernel{bonds_p_data, bs.angle_list,

@@ -31,6 +31,7 @@
 #include "collision_detection/CollisionDetection.hpp"
 #include "communication.hpp"
 #include "constraints/Constraints.hpp"
+#include "dispersive_bonds.hpp"
 #include "electrostatics/icc.hpp"
 #include "forces_init.hpp"
 #include "forces_inline.hpp"
@@ -163,7 +164,12 @@ create_kokkos_bonds_kernel_data(System::System const &system) {
                                 scatter_virial,
 #endif
                                 aosoa,
-                                !system.bond_breakage->breakage_specs.empty()};
+                                !system.bond_breakage->breakage_specs.empty()
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+                                    ,
+                                system.cell_structure->bond_dispersion_state().a
+#endif
+  };
 }
 
 static ForcesKernel create_cabana_neighbor_kernel(
@@ -474,6 +480,10 @@ void System::System::calculate_forces() {
   }
 #endif // ESPRESSO_ELECTROSTATICS
   init_forces_and_thermostat(*this);
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+  // must precede create_kokkos_bonds_kernel_data(), which copies the view
+  calc_bond_dispersion(*this);
+#endif
 #ifdef ESPRESSO_CALIPER
   ESPRESSO_CALI_MARK_BEGIN("calc_long_range_forces");
 #endif

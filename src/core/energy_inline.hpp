@@ -192,6 +192,11 @@ inline std::optional<double> calc_pair_bonded_energy(
   if (auto const *iap = std::get_if<QuarticBond>(&iaparams)) {
     return iap->energy(dx);
   }
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+  if (auto const *iap = std::get_if<DispersiveHarmonicBond>(&iaparams)) {
+    return iap->energy(dx);
+  }
+#endif
 #ifdef ESPRESSO_ELECTROSTATICS
   if (auto const *iap = std::get_if<BondedCoulomb>(&iaparams)) {
     return iap->energy(q1q2, dx);

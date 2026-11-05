@@ -33,6 +33,7 @@
 #include "aosoa_pack.hpp"
 #include "cell_system/CellStructureType.hpp"
 #include "communication.hpp"
+#include "dispersive_bonds.hpp"
 #include "ghosts.hpp"
 #include "ghosts/HaloExchange.hpp"
 #include "integrators/Propagation.hpp"
@@ -102,6 +103,9 @@ void CellStructure::clear_local_properties() {
   m_aosoa.reset();
   m_verlet_list_cabana.reset();
   m_bond_state->clear();
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+  m_bond_dispersion->clear();
+#endif
   m_rebuild_verlet_list_cabana = true;
 }
 void CellStructure::clear_bond_properties() { m_bond_state->reset(); }
@@ -109,6 +113,9 @@ void CellStructure::clear_bond_properties() { m_bond_state->reset(); }
 void CellStructure::set_kokkos_handle(std::shared_ptr<KokkosHandle> handle) {
   m_kokkos_handle = std::move(handle);
   m_bond_state = std::make_unique<LocalBondState>();
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+  m_bond_dispersion = std::make_unique<BondDispersionState>();
+#endif
 }
 
 static auto estimate_max_counts(double pair_cutoff,
@@ -547,6 +554,9 @@ unsigned map_data_parts(unsigned data_parts) {
 #ifdef ESPRESSO_DIPOLE_FIELD_TRACKING
          | ((data_parts & DATA_PART_DIPFLD) ? GHOSTTRANS_DIPFLD : 0u)
 #endif
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+         | ((data_parts & DATA_PART_BOND_DISPERSION) ? GHOSTTRANS_BOND_DISPERSION : 0u)
+#endif
          | ((data_parts & DATA_PART_BONDS) ? GHOSTTRANS_BONDS : 0u);
   /* clang-format on */
 }
@@ -649,6 +659,14 @@ void CellStructure::ghosts_reduce_rattle_correction() {
 #endif
   GhostComm::halo_exchange(
       *decomposition().halo_plan(), *get_system().box_geo, GHOSTTRANS_RATTLE,
+      {GhostComm::Direction::Reduce, GhostComm::Combine::Add}, m_ghost_buffers);
+}
+#endif
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+void CellStructure::ghosts_reduce_bond_dispersion() {
+  GhostComm::halo_exchange(
+      *decomposition().halo_plan(), *get_system().box_geo,
+      GHOSTTRANS_BOND_DISPERSION,
       {GhostComm::Direction::Reduce, GhostComm::Combine::Add}, m_ghost_buffers);
 }
 #endif

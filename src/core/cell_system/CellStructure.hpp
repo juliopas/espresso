@@ -70,6 +70,9 @@
 // forward declarations
 struct KokkosHandle;
 struct LocalBondState;
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+struct BondDispersionState;
+#endif
 
 template <typename Callable>
 concept ParticleCallback = requires(Callable c, Particle &p) {
@@ -102,6 +105,9 @@ enum DataPart : unsigned {
 #endif
 #ifdef ESPRESSO_DIPOLE_FIELD_TRACKING
   DATA_PART_DIPFLD = 512u, /**< Particle::dip_fld */
+#endif
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+  DATA_PART_BOND_DISPERSION = 1024u, /**< Particle::bond_dispersion */
 #endif
 };
 } // namespace Cells
@@ -229,6 +235,9 @@ private:
   bool m_virial_replicas_dirty = false;
 #endif
   std::unique_ptr<LocalBondState> m_bond_state;
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+  std::unique_ptr<BondDispersionState> m_bond_dispersion;
+#endif
   std::unique_ptr<ListType> m_verlet_list_cabana;
   /**
    * @brief Persistent per-neighbor buffer pool for ghost exchanges.
@@ -710,6 +719,13 @@ public:
   void ghosts_reduce_rattle_correction();
 #endif
 
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+  /**
+   * @brief Add bond dispersion sums from ghost particles to real particles.
+   */
+  void ghosts_reduce_bond_dispersion();
+#endif
+
   /**
    * @brief Resort particles.
    */
@@ -913,6 +929,9 @@ public:
   auto const &get_verlet_list_cabana() const { return *m_verlet_list_cabana; }
   auto &bond_state() { return *m_bond_state; }
   auto const &bond_state() const { return *m_bond_state; }
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+  auto &bond_dispersion_state() { return *m_bond_dispersion; }
+#endif
   void clear_local_properties();
   void clear_bond_properties();
 

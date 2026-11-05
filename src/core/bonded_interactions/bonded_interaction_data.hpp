@@ -33,6 +33,7 @@
 #include "bonded_coulomb_sr.hpp"
 #include "bonded_tab.hpp"
 #include "dihedral.hpp"
+#include "dispersive_harmonic.hpp"
 #include "fene.hpp"
 #include "harmonic.hpp"
 #include "immersed_boundary/ibm_tribend.hpp"
@@ -81,7 +82,8 @@ using Bonded_IA_Parameters =
                  AngleCossquareBond, DihedralBond, TabulatedDistanceBond,
                  TabulatedAngleBond, TabulatedDihedralBond, ThermalizedBond,
                  RigidBond, IBMTriel, IBMVolCons, IBMTribend,
-                 OifGlobalForcesBond, OifLocalForcesBond, VirtualBond>;
+                 OifGlobalForcesBond, OifLocalForcesBond, VirtualBond,
+                 DispersiveHarmonicBond>;
 
 /**
  * @brief container for bonded interactions.
@@ -163,6 +165,12 @@ public:
    */
   std::vector<Utils::Vector9d> rigid_bond_virial;
 #endif // ESPRESSO_BOND_CONSTRAINT
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+  auto get_n_dispersive_bonds() const {
+    assert(n_dispersive_bonds >= 0);
+    return n_dispersive_bonds;
+  }
+#endif
   std::optional<key_type> find_bond_id(mapped_type const &target_bond) const {
     for (auto const &[bond_id, bond] : m_params) {
       if (bond == target_bond) {
@@ -233,6 +241,9 @@ private:
   int n_thermalized_bonds = 0;
 #ifdef ESPRESSO_BOND_CONSTRAINT
   int n_rigid_bonds = 0;
+#endif
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+  int n_dispersive_bonds = 0;
 #endif
 };
 

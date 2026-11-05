@@ -455,6 +455,32 @@ struct ParticleRattle {
 };
 #endif
 
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+/**
+ * @brief Per-particle dispersion data of the dispersive harmonic bonds.
+ *
+ * During the dispersion pass, @c P holds the sum of the per-bond terms
+ * and @c n the number of dispersive bonds; after the ghost reduction,
+ * @c P holds their mean. Must stay a pair of doubles: the collective
+ * ghost reduction sums the communication buffer as raw doubles.
+ */
+struct ParticleBondDispersion {
+  double P = 0.;
+  double n = 0.;
+
+  ParticleBondDispersion &operator+=(ParticleBondDispersion const &rhs) {
+    P += rhs.P;
+    n += rhs.n;
+    return *this;
+  }
+
+  template <class Archive> void serialize(Archive &ar, long int /* version */) {
+    ar & P;
+    ar & n;
+  }
+};
+#endif
+
 /** Struct holding all information for one particle. */
 struct Particle { // NOLINT(bugprone-exception-escape)
 private:
@@ -465,6 +491,9 @@ private:
   ParticleLocal l;
 #ifdef ESPRESSO_BOND_CONSTRAINT
   ParticleRattle rattle;
+#endif
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+  ParticleBondDispersion bond_disp;
 #endif
   BondList bl;
 #ifdef ESPRESSO_EXCLUSIONS
@@ -720,6 +749,10 @@ public:
   constexpr auto const &rattle_correction() const { return rattle.correction; }
   constexpr auto &rattle_correction() { return rattle.correction; }
 #endif
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+  constexpr auto const &bond_dispersion() const { return bond_disp; }
+  constexpr auto &bond_dispersion() { return bond_disp; }
+#endif
 
 #ifdef ESPRESSO_EXCLUSIONS
   Utils::compact_vector<int> &exclusions() { return el; }
@@ -760,6 +793,9 @@ BOOST_CLASS_IMPLEMENTATION(ParticleLocal, object_serializable)
 #ifdef ESPRESSO_BOND_CONSTRAINT
 BOOST_CLASS_IMPLEMENTATION(ParticleRattle, object_serializable)
 #endif
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+BOOST_CLASS_IMPLEMENTATION(ParticleBondDispersion, object_serializable)
+#endif
 #ifdef ESPRESSO_VIRTUAL_SITES_RELATIVE
 BOOST_CLASS_IMPLEMENTATION(decltype(ParticleProperties::vs_relative),
                            object_serializable)
@@ -778,6 +814,9 @@ BOOST_IS_BITWISE_SERIALIZABLE(ParticleForce)
 BOOST_IS_BITWISE_SERIALIZABLE(ParticleLocal)
 #ifdef ESPRESSO_BOND_CONSTRAINT
 BOOST_IS_BITWISE_SERIALIZABLE(ParticleRattle)
+#endif
+#ifdef ESPRESSO_DISPERSIVE_BONDS
+BOOST_IS_BITWISE_SERIALIZABLE(ParticleBondDispersion)
 #endif
 #ifdef ESPRESSO_VIRTUAL_SITES_RELATIVE
 BOOST_IS_BITWISE_SERIALIZABLE(decltype(ParticleProperties::vs_relative))
